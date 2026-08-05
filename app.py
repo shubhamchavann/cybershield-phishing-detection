@@ -1,4 +1,8 @@
 from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+from flask import Flask, render_template, request
 from detector import check_url, check_message
 app = Flask(__name__)
 
