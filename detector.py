@@ -137,7 +137,8 @@ def check_message(message):
         "claim reward": 20,
         "processing fee": 15,
         "registration fee": 15,
-        "send money": 20
+        "send money": 20,
+        "training": 10,
     }
 
     for phrase, points in suspicious_phrases.items():
