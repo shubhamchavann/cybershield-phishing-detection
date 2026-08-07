@@ -8,14 +8,26 @@ app = Flask(__name__)
 
 import os
 import mysql.connector
+# ==========================================
+# DATABASE CONNECTION
+# ==========================================
 
-db = mysql.connector.connect(
-    host=os.environ.get("DB_HOST", "localhost"),
-    user=os.environ.get("DB_USER", "root"),
-    password=os.environ.get("DB_PASSWORD", ""),
-    database=os.environ.get("DB_NAME", "phishing_detection"),
-    port=int(os.environ.get("DB_PORT", "3306"))
-)
+def get_db_connection():
+
+    connection = mysql.connector.connect(
+        host=os.environ.get("DB_HOST", "localhost"),
+        user=os.environ.get("DB_USER", "root"),
+        password=os.environ.get("DB_PASSWORD", ""),
+        database=os.environ.get(
+            "DB_NAME",
+            "phishing_detection"
+        ),
+        port=int(
+            os.environ.get("DB_PORT", "3306")
+        )
+    )
+
+    return connection
 
 
 @app.route("/")
@@ -71,3 +83,34 @@ def quiz():
 if __name__ == "__main__":
     app.run(debug=True)
 
+db = get_db_connection()
+
+cursor = db.cursor()
+
+# Your database work here
+
+cursor.close()
+db.close()
+
+
+@app.route("/save-scan", methods=["POST"])
+def save_scan():
+
+    db = get_db_connection()
+
+    cursor = db.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO url_scans (url, risk_level)
+        VALUES (%s, %s)
+        """,
+        ("https://example.com", "HIGH")
+    )
+
+    db.commit()
+
+    cursor.close()
+    db.close()
+
+    return "Saved successfully"
