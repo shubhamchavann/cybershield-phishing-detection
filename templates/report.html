@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header reveal">
+    <span class="eyebrow">HELP PROTECT THE COMMUNITY</span>
+    <h1>Report a Phishing Scam</h1>
+    <p class="lede">Submit malicious domains, suspicious sender accounts, or text messages to our threat verification database.</p>
+</div>
+
+<div class="report-container reveal mt-30">
+    <div class="grid col-2">
+        <!-- Form Panel -->
+        <div class="panel form-panel">
+            <h3>Scam Report Submission</h3>
+            <p class="card-text mb-20">Your reports are fed back directly into the heuristic detection engine to improve future verification accuracy.</p>
+
+            {% if success %}
+                <div class="success-banner mb-20">
+                    <div class="success-icon"><i data-lucide="check-circle"></i></div>
+                    <div class="success-message">
+                        <h4>Report Logged Successfully</h4>
+                        <p>Thank you for keeping the web safe! Our analysts have queued this domain for verification.</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('report_scam') }}">
+                <div class="form-group mb-20">
+                    <label class="form-label">Threat Classification</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="report_type" value="url" checked onclick="toggleReportFields('url')">
+                            <span><i data-lucide="link"></i> Suspicious Link / Domain</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="report_type" value="message" onclick="toggleReportFields('message')">
+                            <span><i data-lucide="mail"></i> Message / Email Content</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group mb-20" id="url-input-group">
+                    <label for="content-url" class="form-label">Suspicious URL / Address</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="globe" class="field-icon"></i>
+                        <input type="url" id="content-url" name="content_url" placeholder="https://phishing-site-update.xyz/login" required>
+                    </div>
+                </div>
+
+                <div class="form-group mb-20" id="msg-input-group" style="display:none;">
+                    <label for="content-message" class="form-label">Scam Text Body / Message Content</label>
+                    <textarea id="content-message" name="content_message" placeholder="Paste full email header or message contents here..."></textarea>
+                </div>
+
+                <div class="form-group mb-20">
+                    <label for="description" class="form-label">Threat Details / Where did you find this?</label>
+                    <textarea id="description" name="description" placeholder="E.g., Received via SMS from +91 98765 43210 claiming to be FedEx delivery update." required style="min-height: 100px;"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">
+                    <i data-lucide="send"></i> Submit Threat Report
+                </button>
+            </form>
+        </div>
+
+        <!-- System Feed Panel -->
+        <div class="panel list-panel">
+            <h3>Recent Scam Submissions</h3>
+            <p class="card-text mb-20">Recent community reported threats currently pending administrative sandbox verification.</p>
+            
+            <div class="reports-list-wrapper">
+                <ul class="reports-list">
+                    {% if reports %}
+                        {% for report in reports %}
+                            <li class="report-item">
+                                <div class="report-meta">
+                                    {% if report.report_type == 'url' %}
+                                        <span class="badge badge-url"><i data-lucide="link"></i> Domain</span>
+                                    {% else %}
+                                        <span class="badge badge-msg"><i data-lucide="mail"></i> Message</span>
+                                    {% endif %}
+                                    <span class="report-time">{{ report.created_at.split(' ')[0] }}</span>
+                                </div>
+                                <div class="report-content-text text-truncate mt-10" title="{{ report.content }}">
+                                    {{ report.content }}
+                                </div>
+                                <div class="report-desc mt-5">
+                                    <strong>Source Details:</strong> {{ report.description }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="no-reports">No community reports submitted yet. Be the first to secure the node!</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleReportFields(type) {
+        const urlGroup = document.getElementById('url-input-group');
+        const urlInput = document.getElementById('content-url');
+        const msgGroup = document.getElementById('msg-input-group');
+        const msgInput = document.getElementById('content-message');
+        
+        if (type === 'url') {
+            urlGroup.style.display = 'block';
+            urlInput.required = true;
+            msgGroup.style.display = 'none';
+            msgInput.required = false;
+            msgInput.value = '';
+        } else {
+            urlGroup.style.display = 'none';
+            urlInput.required = false;
+            urlInput.value = '';
+            msgGroup.style.display = 'block';
+            msgInput.required = true;
+        }
+    }
+</script>
+{% endblock %}

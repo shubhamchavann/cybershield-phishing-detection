@@ -1,213 +1,243 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>CyberShield | Phishing & Fraud Detection</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-
-<body>
-
-<!-- NAVBAR -->
-<nav class="navbar">
-
-    <div class="logo">
-        🛡 CyberShield
-    </div>
-
-    <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/url-checker">URL Scanner</a>
-        <a href="/message-checker">Message Scanner</a>
-        <a href="/awareness">Awareness</a>
-        <a href="/quiz">Quiz</a>
-    </div>
-
-</nav>
-
-
-<!-- HERO SECTION -->
-<section class="hero">
-
-    <div class="hero-content">
-
-        <div class="badge">
-            🛡 Stay Safe Online
+{% block content %}
+<!-- Intro Overlay Loader -->
+<div id="introLoader">
+    <div class="loader-content">
+        <div class="loader-icon">
+            <svg viewBox="0 0 100 100">
+                <!-- Shield Path -->
+                <path class="shield-path" d="M50,15 L80,25 L80,55 C80,75 65,85 50,90 C35,85 20,75 20,55 L20,25 Z" />
+                <!-- Shield Checkmark -->
+                <path class="shield-check" d="M38,52 L46,60 L62,40" />
+            </svg>
+            <div class="loader-scan"></div>
         </div>
-
-        <h1>
-            Detect Phishing.<br>
-            Prevent <span>Digital Fraud.</span>
-        </h1>
-
-        <p>
-            Check suspicious links and messages before they
-            put your personal information or money at risk.
-        </p>
-
-        <div class="hero-buttons">
-
-            <a href="/url-checker"
-               class="primary-btn">
-                🔍 Scan a URL
-            </a>
-
-            <a href="/awareness"
-               class="secondary-btn">
-                Learn About Scams
-            </a>
-
+        <div class="loader-status">
+            SYSTEM INITIALIZING<span class="cursor">_</span>
         </div>
-
+        <h2 class="loader-brand">PHISHGUARD</h2>
     </div>
+</div>
 
-</section>
-
-
-<!-- FEATURES -->
-<section class="features">
-
-    <div class="section-heading">
-
-        <p>CYBERSECURITY TOOLS</p>
-
-        <h2>
-            Protect Yourself From Online Fraud
-        </h2>
-
-        <span>
-            Simple tools and awareness resources to help
-            identify suspicious online activity.
-        </span>
-
+<!-- Threat Awareness Ticker -->
+<div class="threat-ticker-wrapper">
+    <div class="ticker-label"><i data-lucide="activity"></i> LIVE ALERT FEED:</div>
+    <div class="ticker-content">
+        <div class="ticker-track">
+            <span>🚨 SMS Smishing: Fake "UPS Package Pending Address Change" campaign surges globally.</span>
+            <span>🚨 Domain Squatting: Over 400 lookalike "microsoft-security" domains registered this week.</span>
+            <span>🚨 QR Code Scams: Malicious parking meter stickers reported in metropolitan areas.</span>
+            <span>🚨 Netflix Phishing: Insecure "payment-update-netflix.xyz" targeting active subscribers.</span>
+            <span>🚨 Bank Alerts: Spoofed SMS asking for UPI/KYC verification is active. Do not share OTPs.</span>
+        </div>
     </div>
+</div>
 
-
-    <div class="cards">
-
-        <div class="card">
-
-            <div class="icon">🔗</div>
-
-            <h3>Phishing URL Scanner</h3>
-
-            <p>
-                Analyse suspicious website links and identify
-                common phishing indicators.
-            </p>
-
-            <a href="/url-checker">
-                Scan URL →
-            </a>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">💬</div>
-
-            <h3>Scam Message Detector</h3>
-
-            <p>
-                Check suspicious SMS, email and social-media
-                messages for common scam patterns.
-            </p>
-
-            <a href="/message-checker">
-                Check Message →
-            </a>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">🎓</div>
-
-            <h3>Fraud Awareness</h3>
-
-            <p>
-                Learn about phishing, OTP fraud, fake KYC,
-                UPI scams and other online threats.
-            </p>
-
-            <a href="/awareness">
-                Start Learning →
-            </a>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- SAFETY SECTION -->
-<section class="safety">
-
+<div class="dashboard-header reveal">
     <div>
+        <span class="eyebrow">CYBER-SECURITY CONSOLE</span>
+        {% if session.get('user_email') %}
+            <h1>Welcome Back, <span>{{ session.get('user_email').split('@')[0] }}</span></h1>
+        {% else %}
+            <h1>PhishGuard Shield</h1>
+        {% endif %}
+        <p class="lede">Real-time heuristic threat detection for links, emails, and messaging scams.</p>
+    </div>
+</div>
 
-        <p class="small-title">
-            THINK BEFORE YOU CLICK
-        </p>
+<!-- Stats Grid -->
+<div class="grid stats-grid reveal">
+    <div class="panel stat-card cyan-glow">
+        <div class="stat-header">
+            <span class="stat-title">Total Analysis</span>
+            <div class="stat-icon"><i data-lucide="scan"></i></div>
+        </div>
+        <div class="stat-value" id="stat-total">{{ stats.total_scans }}</div>
+        <p class="stat-desc">Links & text messages processed</p>
+    </div>
+    
+    <div class="panel stat-card red-glow">
+        <div class="stat-header">
+            <span class="stat-title">Threats Blocked</span>
+            <div class="stat-icon"><i data-lucide="shield-alert"></i></div>
+        </div>
+        <div class="stat-value text-red" id="stat-threats">{{ stats.threats_blocked }}</div>
+        <p class="stat-desc">Phishing attempts identified</p>
+    </div>
+    
+    <div class="panel stat-card green-glow">
+        <div class="stat-header">
+            <span class="stat-title">Safe Links Verified</span>
+            <div class="stat-icon"><i data-lucide="shield-check"></i></div>
+        </div>
+        <div class="stat-value text-green" id="stat-safe">{{ stats.safe_links }}</div>
+        <p class="stat-desc">Legitimate nodes confirmed</p>
+    </div>
+    
+    <div class="panel stat-card purple-glow">
+        <div class="stat-header">
+            <span class="stat-title">Accuracy Rate</span>
+            <div class="stat-icon"><i data-lucide="percent"></i></div>
+        </div>
+        <div class="stat-value" id="stat-accuracy">{{ stats.accuracy }}%</div>
+        <p class="stat-desc">Based on verified threat reports</p>
+    </div>
+</div>
 
-        <h2>
-            One Click Can Make a Difference
-        </h2>
+<!-- Main Dashboard Split Layout -->
+<div class="dashboard-split reveal">
+    <!-- Left side: Analyzers -->
+    <div class="analyzer-container">
+        <!-- Interactive Tab Switches -->
+        <div class="tab-switcher panel">
+            <button class="tab-btn active" onclick="switchTab('url-tab')">
+                <i data-lucide="link"></i> URL Scanner
+            </button>
+            <button class="tab-btn" onclick="switchTab('message-tab')">
+                <i data-lucide="mail"></i> Email / Text Analyzer
+            </button>
+        </div>
 
-        <p>
-            Cybercriminals often create urgency, fear or
-            excitement to make victims act without thinking.
-            Always verify before clicking links, sharing
-            information or making payments.
-        </p>
+        <!-- URL Scanner Card -->
+        <div id="url-tab" class="tab-content active">
+            <div class="panel scan-panel">
+                <h3>Link Verification Console</h3>
+                <p class="card-text">Enter any website link, link shortener, or domain to scan for structural and brand indicators.</p>
+                
+                <form id="urlScanForm" onsubmit="runUrlScan(event)" class="scanner-form mt-20">
+                    <div class="input-wrapper">
+                        <i data-lucide="globe" class="field-icon"></i>
+                        <input type="text" id="scan-url" placeholder="https://secure-login-bank-update.xyz" required autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="urlScanBtn">
+                        <i data-lucide="search"></i> Verify Link
+                    </button>
+                </form>
 
+                <!-- Loading State -->
+                <div class="scan-loading" id="urlLoader" style="display:none;">
+                    <div class="pulse-ring"></div>
+                    <p>Executing heuristic structural parsing...</p>
+                </div>
+
+                <!-- URL Scan Results -->
+                <div class="scan-result" id="urlResult" style="display:none;">
+                    <div class="result-summary">
+                        <div class="result-gauge">
+                            <!-- SVG Gauge Ring -->
+                            <svg viewBox="0 0 100 100" class="gauge-svg">
+                                <circle class="gauge-bg" cx="50" cy="50" r="40" />
+                                <circle class="gauge-fill" id="urlGaugeFill" cx="50" cy="50" r="40" />
+                            </svg>
+                            <div class="gauge-center">
+                                <span class="gauge-score" id="urlScoreVal">0%</span>
+                                <span class="gauge-label">Risk Index</span>
+                            </div>
+                        </div>
+                        <div class="result-text">
+                            <h4>Verdict: <span id="urlVerdict" class="text-green">Safe</span></h4>
+                            <p id="urlSummaryText">No immediate phishing indicators found. Domain DNS records appear valid.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="result-details">
+                        <h5>Analyzed Risk Indicators:</h5>
+                        <ul id="urlFlagsList" class="flag-list">
+                            <!-- Populated in JS -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email & SMS Analyzer -->
+        <div id="message-tab" class="tab-content">
+            <div class="panel scan-panel">
+                <h3>Message Intelligence Engine</h3>
+                <p class="card-text">Paste message body, email contents, or social media alerts to scan for phishing triggers, urgent syntax, and financial requests.</p>
+                
+                <form id="messageScanForm" onsubmit="runMessageScan(event)" class="message-form mt-20">
+                    <textarea id="scan-message" placeholder="URGENT: Your bank account is blocked due to suspicious activity. Verify immediately at http://verify-identity.gq to avoid permanent suspension." required></textarea>
+                    <button type="submit" class="btn btn-primary mt-10" id="msgScanBtn">
+                        <i data-lucide="shield-alert"></i> Inspect Text
+                    </button>
+                </form>
+
+                <!-- Loading State -->
+                <div class="scan-loading" id="msgLoader" style="display:none;">
+                    <div class="pulse-ring"></div>
+                    <p>Analyzing language patterns and urgency markers...</p>
+                </div>
+
+                <!-- Message Results -->
+                <div class="scan-result" id="msgResult" style="display:none;">
+                    <div class="result-summary">
+                        <div class="result-gauge">
+                            <svg viewBox="0 0 100 100" class="gauge-svg">
+                                <circle class="gauge-bg" cx="50" cy="50" r="40" />
+                                <circle class="gauge-fill" id="msgGaugeFill" cx="50" cy="50" r="40" />
+                            </svg>
+                            <div class="gauge-center">
+                                <span class="gauge-score" id="msgScoreVal">0%</span>
+                                <span class="gauge-label">Threat Index</span>
+                            </div>
+                        </div>
+                        <div class="result-text">
+                            <h4>Verdict: <span id="msgVerdict" class="text-green">Safe</span></h4>
+                            <p id="msgRecText">No urgent language patterns detected.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="result-details">
+                        <h5>Identified Language Triggers:</h5>
+                        <ul id="msgTriggersList" class="flag-list">
+                            <!-- Populated in JS -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-
-    <div class="safety-list">
-
-        <p>✓ Never share your OTP or UPI PIN</p>
-
-        <p>✓ Check the website address carefully</p>
-
-        <p>✓ Avoid unknown payment links</p>
-
-        <p>✓ Verify urgent requests independently</p>
-
-        <p>✓ Use strong and unique passwords</p>
-
+    <!-- Right side: History Panel -->
+    <div class="panel history-panel">
+        <div class="history-title-row">
+            <h3>Recent System Scans</h3>
+            <span class="pulse-indicator"></span> Live
+        </div>
+        <p class="card-text mb-20">Real-time log of scanning operations across the platform.</p>
+        
+        <div class="history-list-wrapper">
+            <ul class="history-list" id="recentScansList">
+                {% if recent_scans %}
+                    {% for scan in recent_scans %}
+                        <li class="history-item">
+                            <div class="history-type">
+                                {% if scan.scan_type == 'url' %}
+                                    <span class="type-badge url-badge"><i data-lucide="link"></i> URL</span>
+                                {% else %}
+                                    <span class="type-badge msg-badge"><i data-lucide="mail"></i> MSG</span>
+                                {% endif %}
+                                <span class="history-time">{{ scan.created_at.split(' ')[1][:5] if ' ' in scan.created_at else scan.created_at }}</span>
+                            </div>
+                            
+                            <div class="history-content-val text-truncate" title="{{ scan.input_content }}">
+                                {{ scan.input_content }}
+                            </div>
+                            
+                            <div class="history-meta">
+                                <span class="badge {% if scan.verdict == 'Safe' %}badge-safe{% elif scan.verdict == 'Suspicious' %}badge-warn{% else %}badge-danger{% endif %}">
+                                    {{ scan.verdict }} ({{ scan.risk_score }}%)
+                                </span>
+                            </div>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="no-history">No scans recorded yet.</li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
-
-</section>
-
-
-<!-- FOOTER -->
-<footer>
-
-    <div class="footer-logo">
-        🛡 CyberShield
-    </div>
-
-    <p>
-        Phishing Scam & Fraud Detection Awareness Program
-    </p>
-
-    <p class="footer-warning">
-        This tool provides educational risk indicators and
-        should not be treated as a guarantee that a website
-        or message is safe.
-    </p>
-
-</footer>
-
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
-
-</html>
+</div>
+{% endblock %}

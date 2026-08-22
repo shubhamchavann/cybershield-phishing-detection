@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header reveal">
+    <span class="eyebrow">CYBER-SECURITY AWARENESS</span>
+    <h1>Phishing Tactics & Education Hub</h1>
+    <p class="lede">Learn to recognize advanced social engineering attacks, spoofing tricks, and tactical red flags before you click.</p>
+</div>
+
+<div class="learn-container reveal mt-30">
+    <!-- Main grid -->
+    <div class="grid col-3-2">
+        <!-- Expanded Accordion Column -->
+        <div class="accordion-panel">
+            <h3 class="mb-20"><i data-lucide="shield-alert"></i> Core Threat Classifications</h3>
+            
+            <!-- Accordion 1: Credential Harvesting -->
+            <div class="accordion-item panel active">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                    <span><i data-lucide="key-round" class="accordion-icon text-cyan"></i> 1. Credential Harvesting & Fake Login Pages</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </button>
+                <div class="accordion-body">
+                    <p class="mb-10"><strong>The Attack:</strong> Scammers clone legitimate login portals (like Netflix, Microsoft 365, Google, or bank portals) to trick you into typing your email, password, or multi-factor authentication (MFA) codes.</p>
+                    <div class="indicator-box mb-10">
+                        <h5>🔍 Critical Red Flags:</h5>
+                        <ul>
+                            <li>Mismatched brand name in URL (e.g., <code>https://netflix-payment-security.xyz</code>).</li>
+                            <li>Lack of HTTPS or SSL certificate warnings.</li>
+                            <li>Generic greeting ("Dear customer" instead of your actual name).</li>
+                            <li>The page asks for details normally not requested, such as security questions during a standard login.</li>
+                        </ul>
+                    </div>
+                    <div class="example-box">
+                        <h5>💬 Real-World Scenario:</h5>
+                        <blockquote>
+                            "Microsoft Account Security: We noticed unusual sign-in activity on your Outlook account from location 'Lagos, Nigeria'. To prevent account closure, verify your credentials immediately at: <code>http://outlook-verify-login.xyz</code>."
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion 2: SMS Smishing -->
+            <div class="accordion-item panel">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                    <span><i data-lucide="smartphone" class="accordion-icon text-orange"></i> 2. SMS Smishing (Text Message Scams)</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </button>
+                <div class="accordion-body">
+                    <p class="mb-10"><strong>The Attack:</strong> Phishing sent via SMS. Since SMS messages are brief and read on-the-go, victims are more vulnerable. Often disguised as delivery updates, toll charges, or bank alerts.</p>
+                    <div class="indicator-box mb-10">
+                        <h5>🔍 Critical Red Flags:</h5>
+                        <ul>
+                            <li>Sent from a generic 10-digit mobile number instead of an official brand short-code.</li>
+                            <li>High-urgency language ("your package will be returned to sender within 24 hours").</li>
+                            <li>Uses suspicious URL shorteners (e.g., <code>bit.ly</code>, <code>tinyurl.com</code>, <code>t.co</code>) to mask the destination.</li>
+                        </ul>
+                    </div>
+                    <div class="example-box">
+                        <h5>💬 Real-World Scenario:</h5>
+                        <blockquote>
+                            "[USPS Alert]: Your package could not be delivered due to an incorrect house number. Please update your address and schedule a redelivery at: <code>https://usps-redeliver-address.info/update</code>."
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion 3: QR Code Scams -->
+            <div class="accordion-item panel">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                    <span><i data-lucide="qr-code" class="accordion-icon text-red"></i> 3. QR Code Scams (Quishing)</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </button>
+                <div class="accordion-body">
+                    <p class="mb-10"><strong>The Attack:</strong> Scammers send QR codes via emails or paste physical stickers over legitimate QR codes (e.g., on parking meters or flyers). Scanning them bypasses email security filters, directing you to fraudulent web pages.</p>
+                    <div class="indicator-box mb-10">
+                        <h5>🔍 Critical Red Flags:</h5>
+                        <ul>
+                            <li>Physical stickers pasted over existing QR codes on parking meters or tables.</li>
+                            <li>Unsolicited emails containing ONLY a QR code and urgent text asking you to scan with your phone.</li>
+                            <li>Scanning takes you to a domain that doesn't match the expected service.</li>
+                        </ul>
+                    </div>
+                    <div class="example-box">
+                        <h5>💬 Real-World Scenario:</h5>
+                        <blockquote>
+                            An email claiming: "MFA Update Required: Scan this QR code immediately using your authenticator app to sync your company email account." The QR code redirects to a credential phishing site.
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion 4: Tech Support Scams -->
+            <div class="accordion-item panel">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                    <span><i data-lucide="cpu" class="accordion-icon text-purple"></i> 4. Technical Support Fraud</span>
+                    <i data-lucide="chevron-down" class="chevron"></i>
+                </button>
+                <div class="accordion-body">
+                    <p class="mb-10"><strong>The Attack:</strong> Fraudsters display pop-ups on your computer claiming your device has a virus. They lock your browser and display toll-free numbers, trying to get you to call support and grant remote control.</p>
+                    <div class="indicator-box mb-10">
+                        <h5>🔍 Critical Red Flags:</h5>
+                        <ul>
+                            <li>Loud beeping sounds or flashing browser screens that won't let you close the window.</li>
+                            <li>Urgent warnings from "Microsoft Security Essentials" or "Windows Defender" showing a random mobile phone number.</li>
+                            <li>Support agents demanding remote control software (like AnyDesk or TeamViewer) to inspect your PC.</li>
+                        </ul>
+                    </div>
+                    <div class="example-box">
+                        <h5>💬 Real-World Scenario:</h5>
+                        <blockquote>
+                            "WINDOWS WARNING: Your system has detected a Trojan horse virus. To avoid data loss and identity theft, call Windows Support immediately at: +1-888-555-0199. Do not restart your computer."
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Threat Card -->
+        <div class="sidebar-tips-panel">
+            <div class="panel cyan-glow-border mb-20">
+                <h3>🛡️ Unified Defense Rule</h3>
+                <p class="card-text mt-10">Phishing works by manipulating human emotions: <strong>Fear, Urgency, Curiosity, or Greed.</strong></p>
+                <div class="defense-step mt-20">
+                    <div class="step-num">01</div>
+                    <div class="step-text">
+                        <h5>Inspect the Domain</h5>
+                        <p>Look at the exact URL spelling. Legitimate sites never use helper domains like <code>paypal-secure.com</code>.</p>
+                    </div>
+                </div>
+                <div class="defense-step mt-15">
+                    <div class="step-num">02</div>
+                    <div class="step-text">
+                        <h5>Never Trust Senders</h5>
+                        <p>Email headers and sender addresses can be easily spoofed. Verify directly through official corporate apps or portals.</p>
+                    </div>
+                </div>
+                <div class="defense-step mt-15">
+                    <div class="step-num">03</div>
+                    <div class="step-text">
+                        <h5>Slow Down</h5>
+                        <p>No legitimate institution will close your account, cancel a shipment, or demand payment within minutes of an email alert.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel warning-panel">
+                <h3>🚨 Think You're a Target?</h3>
+                <p class="card-text mt-10">If you typed credentials on a suspicious link scanned today:</p>
+                <ul class="warning-list mt-15">
+                    <li>Change the passwords of that account immediately.</li>
+                    <li>Turn on Multi-Factor Authentication (MFA).</li>
+                    <li>Notify your bank or organization immediately.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleAccordion(element) {
+        const item = element.parentElement;
+        const isActive = item.classList.contains('active');
+        
+        // Close all accordion items
+        document.querySelectorAll('.accordion-item').forEach(acc => {
+            acc.classList.remove('active');
+        });
+        
+        // Open the clicked one if it wasn't already active
+        if (!isActive) {
+            item.classList.add('active');
+        }
+    }
+</script>
+{% endblock %}

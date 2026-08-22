@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrapper reveal">
+    <div class="panel auth-card cyan-glow-border">
+        <div class="auth-header text-center">
+            <span class="auth-icon"><i data-lucide="shield-check"></i></span>
+            <h2>Sign In to PhishGuard</h2>
+            <p class="card-text mt-10">Access your historical threat verification logs and manage reports.</p>
+        </div>
+
+        {% if error %}
+            <div class="error-banner mt-20">
+                <i data-lucide="alert-triangle"></i>
+                <span>{{ error }}</span>
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('login') }}" class="auth-form mt-25">
+            <div class="form-group mb-20">
+                <label for="email" class="form-label">Email Address</label>
+                <div class="input-wrapper">
+                    <i data-lucide="mail" class="field-icon"></i>
+                    <input type="email" id="email" name="email" placeholder="agent@phishguard.security" required autocomplete="email">
+                </div>
+            </div>
+
+            <div class="form-group mb-20">
+                <label for="password" class="form-label">Account Password</label>
+                <div class="input-wrapper">
+                    <i data-lucide="lock" class="field-icon"></i>
+                    <input type="password" id="password" name="password" placeholder="••••••••••••" required autocomplete="current-password">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-full mt-10">
+                <i data-lucide="log-in"></i> Sign In
+            </button>
+        </form>
+
+        <div class="auth-footer mt-25 text-center">
+            <p>New to the shield? <a href="{{ url_for('signup') }}" class="text-cyan">Register Security Account</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

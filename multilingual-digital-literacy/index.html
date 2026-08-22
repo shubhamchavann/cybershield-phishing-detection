@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Learn digital skills, cybersecurity awareness, online banking safety, and quiz yourself on cyber safety in English, Hindi, and Marathi.">
+  <title data-i18n="heroTitle">Multilingual Digital Literacy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" aria-label="Main Navigation">
+    <div class="container">
+      <a href="#home" class="logo" id="logoLink">
+        <!-- Shield & Laptop Icon SVG -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm0 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 12.2c-3.75-1-6.5-4.81-6.5-9.2V6.3l6.5-2.17 6.5 2.17v2.7c0 4.39-2.75 8.2-6.5 9.2z"/>
+        </svg>
+        <span data-i18n="logoTitle">Digital Literacy</span>
+      </a>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home" class="active" data-i18n="navHome">Home</a></li>
+        <li><a href="#learn" data-i18n="navLearn">Learn</a></li>
+        <li><a href="#safety" data-i18n="navSafety">Safety</a></li>
+        <li><a href="#quiz" data-i18n="navQuiz">Quiz</a></li>
+        <li><a href="#about" data-i18n="navAbout">About</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Accessibility Font-size control -->
+        <div class="font-controls" aria-label="Adjust font size">
+          <button class="font-btn" id="fontSizeDecrease" title="Decrease font size">A-</button>
+          <button class="font-btn active" id="fontSizeDefault" title="Default font size">A</button>
+          <button class="font-btn" id="fontSizeIncrease" title="Increase font size">A+</button>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+        <button class="action-btn" id="themeToggle" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
+          <!-- Moon Icon (shows in light mode) -->
+          <svg id="themeMoon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 3a9 9 0 109 9 9.97 9.97 0 00-9-9zm0 16a7 7 0 117-7 7 7 0 01-7 7z"/>
+          </svg>
+          <!-- Sun Icon (shows in dark mode) -->
+          <svg id="themeSun" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none;">
+            <path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 16a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zM5.64 5.64a1 1 0 011.41 0l1.42 1.42a1 1 0 01-1.42 1.42L5.64 7.05a1 1 0 010-1.41zm11.31 11.31a1 1 0 011.42 0l1.41 1.41a1 1 0 01-1.41 1.42l-1.42-1.42a1 1 0 010-1.41zM3 12a1 1 0 011-1h2a1 1 0 110 2H4a1 1 0 01-1-1zm14 0a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zM7.05 18.36a1 1 0 010-1.41l1.42-1.42a1 1 0 111.42 1.42l-1.42 1.42a1 1 0 01-1.42 0zm11.31-11.31a1 1 0 010-1.42l1.42-1.41a1 1 0 111.41 1.41l-1.41 1.42a1 1 0 01-1.42 0z"/>
+          </svg>
+        </button>
+
+        <!-- Language Selector -->
+        <div class="language-selector">
+          <select id="langSelect" aria-label="Select Language">
+            <option value="en">English</option>
+            <option value="hi">हिंदी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+          </select>
+        </div>
+
+        <!-- Mobile Hamburger Menu Button -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Navigation Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero" id="home">
+    <div class="container">
+      <div class="hero-content">
+        <h1 data-i18n="heroTitle">Multilingual Digital Literacy</h1>
+        <p data-i18n="heroSubtitle">Learn Digital Skills. Stay Safe Online. Learn in Your Language.</p>
+        <div class="hero-actions">
+          <a href="#learn" class="btn btn-primary" data-i18n="btnStartLearning">Start Learning</a>
+          <a href="#quiz" class="btn btn-secondary" data-i18n="btnTakeQuiz">Take Quiz</a>
+        </div>
+      </div>
+      <div class="hero-illustration">
+        <!-- SVG Illustrating Cybersecurity & Digital Literacy -->
+        <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="svgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4f46e5" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+            <filter id="svgShadow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="10" stdDeviation="8" flood-opacity="0.15" />
+            </filter>
+          </defs>
+          <!-- Background grids and shapes -->
+          <circle cx="400" cy="100" r="80" fill="url(#svgGrad)" opacity="0.1" />
+          <circle cx="100" cy="300" r="50" fill="url(#svgGrad)" opacity="0.1" />
+          
+          <!-- Computer/Monitor Base -->
+          <rect x="100" y="80" width="300" height="200" rx="10" fill="#1e293b" filter="url(#svgShadow)" />
+          <!-- Screen area -->
+          <rect x="115" y="95" width="270" height="150" rx="4" fill="#0f172a" />
+          <!-- Monitor stand -->
+          <path d="M220 280 L280 280 L290 320 L210 320 Z" fill="#475569" />
+          <rect x="180" y="320" width="140" height="10" rx="3" fill="#334155" />
+          
+          <!-- Graphic elements inside screen -->
+          <!-- Web URL Bar -->
+          <rect x="130" y="105" width="240" height="18" rx="4" fill="#1e293b" />
+          <circle cx="140" cy="114" r="3" fill="#ef4444" />
+          <circle cx="148" cy="114" r="3" fill="#f59e0b" />
+          <circle cx="156" cy="114" r="3" fill="#10b981" />
+          <rect x="170" y="110" width="160" height="8" rx="2" fill="#475569" />
+          
+          <!-- Shield (representing safety) -->
+          <path d="M250 140 L300 160 V200 C300 230 250 250 250 250 C250 250 200 230 200 200 V160 L250 140 Z" fill="url(#svgGrad)" opacity="0.9" />
+          <!-- Checkmark in shield -->
+          <path d="M235 195 L245 205 L268 182" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          
+          <!-- Mobile device standing aside -->
+          <rect x="350" y="180" width="60" height="120" rx="8" fill="#334155" filter="url(#svgShadow)" />
+          <rect x="355" y="190" width="50" height="100" rx="4" fill="#0f172a" />
+          <circle cx="380" cy="295" r="4" fill="#475569" />
+          <!-- Security lock symbol on smartphone -->
+          <rect x="372" y="240" width="16" height="12" rx="2" fill="#06b6d4" />
+          <path d="M375 240 V234 C375 231 380 231 380 234 V240" fill="none" stroke="#06b6d4" stroke-width="2" />
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Dashboard: Search and Learning Progress -->
+    <section class="container" style="padding: 0;">
+      <div class="dashboard-panel">
+        <div class="dashboard-grid">
+          <!-- Live Topic Search Box -->
+          <div class="search-wrapper">
+            <h3 data-i18n="searchTitle">Search Topics</h3>
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+              </svg>
+              <input type="text" id="searchInput" placeholder="Search digital literacy topics..." data-i18n-placeholder="searchPlaceholder">
+            </div>
+          </div>
+
+          <!-- Learning Progress Tracker -->
+          <div class="progress-wrapper">
+            <h3>
+              <span data-i18n="progressLabel">Your Learning Progress</span>
+              <span class="progress-stat" id="progressStat">0/6</span>
+            </h3>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+            <div class="progress-actions">
+              <button id="btnResetProgress">
+                <!-- Reset circular arrows icon -->
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;">
+                  <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                </svg>
+                <span data-i18n="btnResetProgress">Reset Progress</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Learning Section -->
+    <section class="section" id="learn">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="learnHeader">Learn Digital Skills</h2>
+          <p data-i18n="learnSub">Master the basics of computing, internet, emails, digital payments, smartphones, and government services.</p>
+        </div>
+
+        <div class="learning-grid" id="learningGrid">
+          <!-- Card 1: Computer Basics -->
+          <div class="learning-card" data-topic="computer" id="card-computer">
+            <div class="card-top">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 18V3H2v15H0v2h24v-2h-2zm-8 0h-4v-1h4v1zm6-3H4V5h16v10z"/>
+                </svg>
+              </div>
+              <button class="completion-checkbox" data-topic="computer" title="Mark as completed" aria-label="Mark Computer Basics as completed">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </button>
+            </div>
+            <h3 data-i18n="topics.computer.title">Computer Basics</h3>
+            <p data-i18n="topics.computer.short">Understand what a computer is, using a keyboard and mouse, files, folders, and basic software.</p>
+            <div class="card-footer">
+              <button class="btn btn-secondary btn-learn-more" data-topic="computer" data-i18n="btnLearnMore">Learn More</button>
+            </div>
+          </div>
+
+          <!-- Card 2: Internet Basics -->
+          <div class="learning-card" data-topic="internet" id="card-internet">
+            <div class="card-top">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/>
+                </svg>
+              </div>
+              <button class="completion-checkbox" data-topic="internet" title="Mark as completed" aria-label="Mark Internet Basics as completed">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </button>
+            </div>
+            <h3 data-i18n="topics.internet.title">Internet Basics</h3>
+            <p data-i18n="topics.internet.short">Explore the World Wide Web, using browsers, search engines, URLs, and identifying websites.</p>
+            <div class="card-footer">
+              <button class="btn btn-secondary btn-learn-more" data-topic="internet" data-i18n="btnLearnMore">Learn More</button>
+            </div>
+          </div>
+
+          <!-- Card 3: Email Essentials -->
+          <div class="learning-card" data-topic="email" id="card-email">
+            <div class="card-top">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              </div>
+              <button class="completion-checkbox" data-topic="email" title="Mark as completed" aria-label="Mark Email Essentials as completed">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </button>
+            </div>
+            <h3 data-i18n="topics.email.title">Email Essentials</h3>
+            <p data-i18n="topics.email.short">Learn how to create an email account, compose and send emails, use attachments, and stay secure.</p>
+            <div class="card-footer">
+              <button class="btn btn-secondary btn-learn-more" data-topic="email" data-i18n="btnLearnMore">Learn More</button>
+            </div>
+          </div>
+
+          <!-- Card 4: Digital Payments -->
+          <div class="learning-card" data-topic="payments" id="card-payments">
+            <div class="card-top">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                </svg>
+              </div>
+              <button class="completion-checkbox" data-topic="payments" title="Mark as completed" aria-label="Mark Digital Payments as completed">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </button>
+            </div>
+            <h3 data-i18n="topics.payments.title">Digital Payments</h3>
+            <p data-i18n="topics.payments.short">Master UPI payments, scanning QR codes safely, net banking, and necessary financial safety checks.</p>
+            <div class="card-footer">
+              <button class="btn btn-secondary btn-learn-more" data-topic="payments" data-i18n="btnLearnMore">Learn More</button>
+            </div>
+          </div>
+
+          <!-- Card 5: Smartphone Literacy -->
+          <div class="learning-card" data-topic="smartphone" id="card-smartphone">
+            <div class="card-top">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
+                </svg>
+              </div>
+              <button class="completion-checkbox" data-topic="smartphone" title="Mark as completed" aria-label="Mark Smartphone Literacy as completed">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </button>
+            </div>
+            <h3 data-i18n="topics.smartphone.title">Smartphone Literacy</h3>
+            <p data-i18n="topics.smartphone.short">Understand app stores, configuring app permissions, system updates, and locking your device.</p>
+            <div class="card-footer">
+              <button class="btn btn-secondary btn-learn-more" data-topic="smartphone" data-i18n="btnLearnMore">Learn More</button>
+            </div>
+          </div>
+
+          <!-- Card 6: Government Digital Services -->
+          <div class="learning-card" data-topic="govServices" id="card-govServices">
+            <div class="card-top">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.49 12C4.55 12.82 4 14.09 4 15.5c0 2.76 2.24 5 5 5s5-2.24 5-5.5H8v-2h7.93c.04.16.07.33.07.5 0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.38 1.19-4.47 3-5.74V12h1.49z"/>
+                </svg>
+              </div>
+              <button class="completion-checkbox" data-topic="govServices" title="Mark as completed" aria-label="Mark Government Services as completed">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </button>
+            </div>
+            <h3 data-i18n="topics.govServices.title">Government Digital Services</h3>
+            <p data-i18n="topics.govServices.short">Navigate official government portals, access digital documents, and perform secure logins.</p>
+            <div class="card-footer">
+              <button class="btn btn-secondary btn-learn-more" data-topic="govServices" data-i18n="btnLearnMore">Learn More</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cyber Safety Section -->
+    <section class="section" id="safety" style="background-color: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="safetyHeader">Stay Safe Online</h2>
+          <p data-i18n="safetySub">Learn about the most common online threats, identify red flags, and understand what to do and what to avoid.</p>
+        </div>
+
+        <div class="safety-grid">
+          <!-- Phishing Card -->
+          <div class="safety-card" data-safety="phishing">
+            <h3 data-i18n="safetyTopics.phishing.title">Phishing</h3>
+            <p data-i18n="safetyTopics.phishing.what" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem;">
+              Phishing is a cyber attack where scammers send fake emails, SMS, or direct messages that look like they come from trusted organizations...
+            </p>
+          </div>
+
+          <!-- Fake Websites Card -->
+          <div class="safety-card" data-safety="fakeWebsites">
+            <h3 data-i18n="safetyTopics.fakeWebsites.title">Fake Websites</h3>
+            <p data-i18n="safetyTopics.fakeWebsites.what" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem;">
+              Scammers create websites that look exactly like popular shopping sites, government portals, or bank login pages to capture passwords...
+            </p>
+          </div>
+
+          <!-- Online Scams Card -->
+          <div class="safety-card" data-safety="scams">
+            <h3 data-i18n="safetyTopics.scams.title">Online Scams</h3>
+            <p data-i18n="safetyTopics.scams.what" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem;">
+              Fraudulent schemes designed to trick you out of your hard-earned money. These include lottery wins, fake job offers...
+            </p>
+          </div>
+
+          <!-- Strong Passwords Card -->
+          <div class="safety-card" data-safety="passwords">
+            <h3 data-i18n="safetyTopics.passwords.title">Strong Passwords</h3>
+            <p data-i18n="safetyTopics.passwords.what" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem;">
+              Your first line of defense against cybercriminals. Hackers use automated programs to guess simple passwords in seconds...
+            </p>
+          </div>
+
+          <!-- OTP Safety Card -->
+          <div class="safety-card" data-safety="otp">
+            <h3 data-i18n="safetyTopics.otp.title">OTP Safety</h3>
+            <p data-i18n="safetyTopics.otp.what" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem;">
+              A One-Time Password (OTP) is a security code sent to your phone to verify transaction or login authenticity...
+            </p>
+          </div>
+
+          <!-- UPI Fraud Card -->
+          <div class="safety-card" data-safety="upi">
+            <h3 data-i18n="safetyTopics.upi.title">UPI Fraud</h3>
+            <p data-i18n="safetyTopics.upi.what" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem;">
+              Scammers attempt to trick users into sending money using payment apps through fake collect requests, QR codes...
+            </p>
+          </div>
+
+          <!-- Social Media Safety Card -->
+          <div class="safety-card" data-safety="socialMedia">
+            <h3 data-i18n="safetyTopics.socialMedia.title">Social Media Safety</h3>
+            <p data-i18n="safetyTopics.socialMedia.what" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem;">
+              Ensuring your safety on platforms like Facebook, WhatsApp, Instagram, and YouTube. Protecting yourself from identity theft...
+            </p>
+          </div>
+
+          <!-- Privacy Protection Card -->
+          <div class="safety-card" data-safety="privacy">
+            <h3 data-i18n="safetyTopics.privacy.title">Privacy Protection</h3>
+            <p data-i18n="safetyTopics.privacy.what" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.9rem;">
+              Controlling how your personal data (name, email, phone, location, photos) is collected, stored, and shared online...
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Tools Section (URL Checker & Phishing Detector) -->
+    <section class="section" id="tools">
+      <div class="container">
+        <div class="tools-grid">
+          <!-- 1. Interactive URL Safety Checker -->
+          <div class="tool-card" id="urlChecker">
+            <h2 data-i18n="urlCheckerTitle">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+              </svg>
+              Check a Website URL
+            </h2>
+            <p class="description" data-i18n="urlCheckerLabel">Enter a URL to evaluate its safety risk:</p>
+            
+            <div class="tool-disclaimer" data-i18n="urlDisclaimer">
+              <strong>Disclaimer:</strong> This is an educational awareness tool based on client-side heuristic rules. It does not replace professional security software. It cannot guarantee absolute safety.
+            </div>
+
+            <form id="urlForm" onsubmit="return false;">
+              <div class="form-group">
+                <input type="text" id="urlInput" class="form-input" placeholder="e.g., https://example.com" data-i18n-placeholder="urlCheckerPlaceholder" required>
+              </div>
+              <button type="submit" class="btn btn-primary" id="btnCheckUrl" data-i18n="btnCheckUrl">Check URL</button>
+            </form>
+
+            <!-- URL Result Area -->
+            <div class="result-box" id="urlResultBox">
+              <div class="result-header">
+                <h4 data-i18n="urlResultTitle">Risk Evaluation Result:</h4>
+                <span class="risk-badge" id="urlRiskBadge">Low Risk</span>
+              </div>
+              <div class="result-body-content">
+                <h5 class="result-reasons-title" data-i18n="urlReasonsTitle">Analysis Findings:</h5>
+                <ul class="result-reasons" id="urlReasonsList">
+                  <!-- Reasons injected by javascript -->
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Interactive Phishing Message Detector -->
+          <div class="tool-card" id="phishDetector">
+            <h2 data-i18n="phishDetectorTitle">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+              </svg>
+              Is This Message Safe?
+            </h2>
+            <p class="description" data-i18n="phishDetectorLabel">Paste a suspicious message (SMS, Email, Chat) to evaluate it:</p>
+
+            <div class="tool-disclaimer" data-i18n="phishDisclaimer">
+              <strong>Disclaimer:</strong> This detector is an educational tool analyzing keyword patterns. It is not an absolute authority and may miss sophisticated scams.
+            </div>
+
+            <form id="phishForm" onsubmit="return false;">
+              <div class="form-group">
+                <textarea id="phishInput" class="form-input" placeholder="e.g., Congratulations! You won a lottery of 1 Crore. Call this number to claim now. Send OTP..." data-i18n-placeholder="phishDetectorPlaceholder" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" id="btnCheckMessage" data-i18n="btnCheckMessage">Check Message</button>
+            </form>
+
+            <!-- Message Detector Result Area -->
+            <div class="result-box" id="phishResultBox">
+              <div class="result-header">
+                <h4>
+                  <span data-i18n="phishScoreLabel">Risk Score:</span>
+                  <span id="phishScoreValue" style="color:var(--primary); font-weight:800;">75/100</span>
+                </h4>
+                <span class="risk-badge" id="phishRiskBadge">High Risk</span>
+              </div>
+              <div class="result-body-content">
+                <h5 class="result-reasons-title" data-i18n="phishSignsTitle">Detected Warning Signs:</h5>
+                <ul class="result-reasons" id="phishSignsList">
+                  <!-- Injected by JavaScript -->
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Multilingual Quiz -->
+    <section class="section" id="quiz" style="background-color: var(--bg-secondary);">
+      <div class="container">
+        <div class="quiz-container">
+          <!-- Quiz Intro Panel -->
+          <div class="quiz-panel" id="quizIntroPanel">
+            <div class="quiz-intro">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+              </svg>
+              <h3 data-i18n="quizTitle">Interactive Cyber Safety Quiz</h3>
+              <p data-i18n="learnSub">Test your digital security knowledge with our 15-question interactive test. Available in all languages!</p>
+              <button class="btn btn-primary" id="btnStartQuiz" data-i18n="btnTakeQuiz">Take Quiz</button>
+            </div>
+          </div>
+
+          <!-- Quiz Active Question Panel -->
+          <div class="quiz-panel" id="quizActivePanel" style="display: none;">
+            <div class="quiz-header">
+              <span class="quiz-progress-text">
+                <span data-i18n="quizProgress">Question</span> <span id="quizCurrentNum">1</span>/15
+              </span>
+            </div>
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="quizProgressFill"></div>
+            </div>
+
+            <div class="quiz-question-card">
+              <h3 id="quizQuestionText">Question text appears here?</h3>
+              <div class="quiz-options" id="quizOptionsContainer">
+                <!-- Radio options injected dynamically -->
+              </div>
+            </div>
+
+            <div class="quiz-navigation">
+              <button class="btn btn-outline" id="btnQuizPrev" data-i18n="btnPrev">Previous</button>
+              <button class="btn btn-primary" id="btnQuizNext" data-i18n="btnNext">Next</button>
+            </div>
+          </div>
+
+          <!-- Quiz Results Panel -->
+          <div class="quiz-panel quiz-results" id="quizResultsPanel">
+            <div class="quiz-results-score" id="quizScoreValue">12/15</div>
+            <div class="quiz-results-message" id="quizResultMessage" data-i18n="quizFeedbackExcellent">Excellent!</div>
+            <p class="quiz-results-desc" id="quizResultDesc">You have a solid understanding of digital safety and cybersecurity.</p>
+            
+            <button class="btn btn-primary" id="btnRestartQuiz" data-i18n="btnRestartQuiz">Restart Quiz</button>
+
+            <!-- Detailed Question-by-Question Review -->
+            <div class="review-section">
+              <h4 data-i18n="quizExplanationsHeader">Question Explanations:</h4>
+              <div id="quizReviewContainer">
+                <!-- Answer review list items injected by javascript -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Digital Safety Tips Cards -->
+    <section class="section" id="tips">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="tipsTitle">Quick Digital Safety Tips</h2>
+          <p data-i18n="heroSubtitle">Simple rules to secure your daily digital life from threat actors.</p>
+        </div>
+
+        <div class="tips-grid" id="tipsGrid">
+          <!-- Injected dynamically based on language -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Emergency Scam Guidance -->
+    <section class="section" id="emergency" style="background-color: var(--bg-secondary);">
+      <div class="container">
+        <div class="section-header">
+          <h2 data-i18n="emergencyTitle">Received a Suspicious Message? Follow These Steps</h2>
+          <p data-i18n="urlDisclaimer" style="max-width:600px; margin:0 auto; font-weight:500;">
+            Dial 1930 immediately to report financial fraud or file a complaint on cybercrime.gov.in.
+          </p>
+        </div>
+
+        <div class="emergency-grid" id="emergencyGrid">
+          <!-- Steps injected dynamically by JavaScript based on active language -->
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div>
+            <div class="about-intro-box">
+              <h2 data-i18n="aboutTitle" style="font-size: 2.25rem; margin-bottom: 1.5rem;">About the Project</h2>
+              <p data-i18n="aboutIntro">This multilingual digital literacy platform is an educational CEP (Community Engagement Project) initiative designed to make digital knowledge simpler and safer for everyone, especially beginners.</p>
+            </div>
+            
+            <div class="about-details">
+              <div class="about-item">
+                <h3 data-i18n="aboutObjectiveTitle">Project Objective</h3>
+                <p data-i18n="aboutObjectiveText">To empower non-technical citizens with basic computing skills, smart safety habits, and risk analysis tools in their native languages to defend against daily cyber threats.</p>
+              </div>
+              <div class="about-item">
+                <h3 data-i18n="aboutFeaturesTitle">Key Features</h3>
+                <p data-i18n="aboutFeaturesText">Interactive multi-language selector, core computing/internet courses, emergency scam guidelines, heuristic web URL risk checker, phishing message score detector, and a progress tracker.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="future-scope-card">
+            <h3 data-i18n="aboutFutureTitle">Future Scope</h3>
+            <p data-i18n="aboutFutureText">Future iterations will expand to include voice-based screen readers, offline usage support, artificial-intelligence based scam voice analyzers, and support for additional Indian languages.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h3 data-i18n="footerTitle">Multilingual Digital Literacy Content Development</h3>
+          <p data-i18n="aboutIntro">Making digital learning accessible and cybersecurity safety understandable for everyone across different languages.</p>
+        </div>
+        <div class="footer-links">
+          <h4 data-i18n="navLearn">Learn</h4>
+          <ul>
+            <li><a href="#learn" data-i18n="topics.computer.title">Computer Basics</a></li>
+            <li><a href="#learn" data-i18n="topics.internet.title">Internet Basics</a></li>
+            <li><a href="#learn" data-i18n="topics.payments.title">Digital Payments</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4 data-i18n="navSafety">Safety</h4>
+          <ul>
+            <li><a href="#safety" data-i18n="safetyTopics.phishing.title">Phishing</a></li>
+            <li><a href="#safety" data-i18n="safetyTopics.fakeWebsites.title">Fake Websites</a></li>
+            <li><a href="#safety" data-i18n="safetyTopics.otp.title">OTP Safety</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4 data-i18n="navAbout">About</h4>
+          <ul>
+            <li><a href="#about" data-i18n="aboutObjectiveTitle">Project Objective</a></li>
+            <li><a href="#about" data-i18n="aboutFutureTitle">Future Scope</a></li>
+            <li><a href="#emergency" data-i18n="emergencyTitle">Emergency Steps</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026. <span data-i18n="footerSubtitle">Developed as a College CEP Project.</span></p>
+        <div>
+          <span data-i18n="footerDevLabel">Developed by:</span> <strong style="color:var(--primary);">[Student Placeholder]</strong>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Reusable Details Modal -->
+  <div class="modal-overlay" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Topic Details</h3>
+        <button class="btn-close-modal" id="modalCloseBtn" aria-label="Close details modal">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Body content loaded dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modalMarkCompleteBtn" data-i18n="markCompleted">Mark as Completed</button>
+        <button class="btn btn-primary" id="modalCloseActionBtn" data-i18n="btnClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Translation dictionary script loaded first -->
+  <script src="translations.js"></script>
+  <!-- Core script logic -->
+  <script src="script.js"></script>
+</body>
+</html>
