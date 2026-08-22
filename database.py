@@ -2,7 +2,11 @@ import sqlite3
 import json
 import os
 
-DB_FILE = "phishguard.db"
+# Use /tmp/phishguard.db on Vercel serverless environment (writable directory)
+if os.environ.get("VERCEL"):
+    DB_FILE = "/tmp/phishguard.db"
+else:
+    DB_FILE = "phishguard.db"
 
 def get_db_connection():
     """Establish a connection to the SQLite database."""
