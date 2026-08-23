@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shubham Chavan — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Work+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFCF4;
+    --ink:#0B0B0C;
+    --blue:#2B4CFF;
+    --coral:#FF5A36;
+    --lime:#C6FF3D;
+    --violet:#8B5CF6;
+    --card:#FFFFFF;
+    --border:4px;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family:'Work Sans', sans-serif;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{ font-family:'Space Grotesk', sans-serif; }
+  .mono{ font-family:'Space Mono', monospace; }
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background: var(--ink); color: var(--lime); }
+
+  /* ---- marquee ---- */
+  .marquee-wrap{
+    border-top:var(--border) solid var(--ink);
+    border-bottom:var(--border) solid var(--ink);
+    background: var(--ink);
+    overflow:hidden;
+    padding:12px 0;
+    position:sticky; top:0; z-index:80;
+  }
+  .marquee{
+    display:flex;
+    white-space:nowrap;
+    animation: scroll 22s linear infinite;
+    width:max-content;
+  }
+  .marquee span{
+    font-family:'Space Mono', monospace;
+    font-size:14px;
+    font-weight:700;
+    color: var(--lime);
+    padding:0 24px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .marquee span.alt{ color:#fff; }
+  @keyframes scroll{
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce){ .marquee{ animation:none; } }
+
+  main{ max-width:1080px; margin:0 auto; padding:0 20px; }
+
+  /* ---- header ---- */
+  header{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:26px 0;
+    flex-wrap:wrap; gap:14px;
+  }
+  header .logo{ font-size:20px; font-weight:800; }
+  header nav{ display:flex; gap:4px; flex-wrap:wrap; }
+  header nav a{
+    font-size:13px; font-weight:600;
+    padding:9px 16px;
+    border:2.5px solid var(--ink);
+    background: var(--card);
+    transition: transform .15s ease, background .15s ease;
+  }
+  header nav a:hover, header nav a:focus-visible{ background: var(--lime); transform: translate(-2px,-2px); outline:none; }
+
+  /* ---- hero ---- */
+  .hero{
+    display:grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap:28px;
+    padding:36px 0 56px;
+    align-items:start;
+  }
+  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } }
+  .hero-main{
+    border:var(--border) solid var(--ink);
+    background: var(--card);
+    box-shadow: 10px 10px 0 var(--ink);
+    padding:40px 34px;
+  }
+  .hero-main .tag{
+    display:inline-block;
+    background: var(--blue);
+    color:#fff;
+    font-family:'Space Mono', monospace;
+    font-size:11.5px;
+    font-weight:700;
+    padding:6px 12px;
+    border:2px solid var(--ink);
+    margin-bottom:20px;
+    transform: rotate(-2deg);
+  }
+  .hero-main h1{
+    font-size: clamp(34px, 6vw, 58px);
+    font-weight:800;
+    line-height:1.04;
+  }
+  .hero-main h1 .hl{
+    background: var(--lime);
+    padding:0 8px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .hero-main p{
+    margin-top:20px;
+    font-size:15.5px;
+    max-width:520px;
+    line-height:1.65;
+  }
+  .hero-actions{ display:flex; gap:12px; margin-top:28px; flex-wrap:wrap; }
+  .btn{
+    padding:13px 22px;
+    border:var(--border) solid var(--ink);
+    font-weight:700;
+    font-size:13.5px;
+    background: var(--card);
+    box-shadow: 5px 5px 0 var(--ink);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{ transform: translate(-3px,-3px); box-shadow: 8px 8px 0 var(--ink); }
+  .btn:active{ transform: translate(0,0); box-shadow:0 0 0 var(--ink); }
+  .btn.solid{ background: var(--ink); color: var(--bg); }
+  .btn.coral{ background: var(--coral); color:#fff; }
+
+  .hero-side{
+    border:var(--border) solid var(--ink);
+    background: var(--violet);
+    box-shadow: 10px 10px 0 var(--ink);
+    padding:26px;
+    color:#fff;
+    display:flex; flex-direction:column; gap:16px;
+  }
+  .hero-side .stat{ border-bottom:2px dashed rgba(255,255,255,0.4); padding-bottom:12px; }
+  .hero-side .stat:last-child{ border-bottom:none; padding-bottom:0; }
+  .hero-side .stat .num{ font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:800; }
+  .hero-side .stat .lbl{ font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; opacity:0.85; }
+
+  /* ---- section label ---- */
+  .sec-label{
+    display:inline-flex; align-items:center; gap:10px;
+    margin: 54px 0 22px;
+  }
+  .sec-label .num{
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    background: var(--ink);
+    color: var(--bg);
+    padding:5px 10px;
+  }
+  .sec-label h2{ font-size:26px; font-weight:800; }
+
+  .reveal{ opacity:0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* ---- about ---- */
+  .about-grid{ display:grid; grid-template-columns:1fr 1.3fr; gap:22px; }
+  @media (max-width:700px){ .about-grid{ grid-template-columns:1fr; } }
+  .panel{
+    border:var(--border) solid var(--ink);
+    background: var(--card);
+    box-shadow: 8px 8px 0 var(--ink);
+    padding:28px;
+  }
+  .avatar-block{ text-align:center; }
+  .mono-badge{
+    width:80px; height:80px;
+    background: var(--coral);
+    border:3px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:800; font-size:28px;
+    color:#fff;
+    margin:0 auto 14px;
+  }
+  .lang-row{ display:flex; gap:8px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  .pill{
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    border:2px solid var(--ink);
+    padding:5px 10px;
+    background: var(--lime);
+  }
+  .edu-row{ display:flex; justify-content:space-between; align-items:baseline; padding:14px 0; border-bottom:2px dashed var(--ink); gap:12px; flex-wrap:wrap; }
+  .edu-row:last-child{ border-bottom:none; }
+  .edu-row h4{ font-size:15.5px; font-weight:700; }
+  .edu-row .sub{ font-size:12.5px; color:#555; margin-top:2px; }
+  .edu-row .score{ font-family:'Space Mono',monospace; font-size:13px; background:var(--blue); color:#fff; padding:4px 10px; }
+
+  /* ---- skills ---- */
+  .skill-block{ margin-bottom:22px; }
+  .skill-block:last-child{ margin-bottom:0; }
+  .skill-block .cat{ font-family:'Space Mono',monospace; font-size:11.5px; text-transform:uppercase; margin-bottom:10px; display:block; }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:10px; }
+  .chip{
+    font-size:13.5px; font-weight:600;
+    padding:9px 16px;
+    border:2.5px solid var(--ink);
+    background: var(--card);
+    transition: transform .15s ease, background .15s ease;
+  }
+  .chip:nth-child(3n+1):hover{ background: var(--lime); transform: rotate(-2deg); }
+  .chip:nth-child(3n+2):hover{ background: var(--coral); color:#fff; transform: rotate(2deg); }
+  .chip:nth-child(3n){ transform: rotate(0); }
+  .chip:nth-child(3n):hover{ background: var(--blue); color:#fff; transform: rotate(-1deg); }
+
+  /* ---- projects ---- */
+  .project-grid{ display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  @media (max-width:700px){ .project-grid{ grid-template-columns:1fr; } }
+  .project-card{
+    border:var(--border) solid var(--ink);
+    background: var(--card);
+    box-shadow: 8px 8px 0 var(--ink);
+    display:flex; flex-direction:column;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .project-card:hover{ transform: translate(-4px,-4px); box-shadow: 12px 12px 0 var(--ink); }
+  .project-top{
+    height:90px;
+    border-bottom:3px solid var(--ink);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 20px;
+  }
+  .project-top.chat{ background: var(--blue); }
+  .project-top.shield{ background: var(--lime); }
+  .project-top .idx{ font-family:'Space Mono',monospace; font-size:26px; font-weight:700; color:rgba(0,0,0,0.25); }
+  .project-top.chat .idx{ color:rgba(255,255,255,0.4); }
+  .project-body{ padding:24px; display:flex; flex-direction:column; gap:12px; flex:1; }
+  .project-body h3{ font-size:20px; font-weight:800; }
+  .project-body p{ font-size:13.5px; color:#444; line-height:1.6; }
+  .tag-row{ display:flex; gap:6px; flex-wrap:wrap; }
+  .tag-row span{ font-family:'Space Mono',monospace; font-size:10px; border:1.5px solid var(--ink); padding:3px 8px; }
+  .project-links{ margin-top:auto; display:flex; gap:10px; padding-top:10px; }
+  .project-links a{
+    font-size:12.5px; font-weight:700;
+    padding:9px 14px;
+    border:2px solid var(--ink);
+    transition: background .15s ease;
+  }
+  .project-links a:hover{ background: var(--ink); color: var(--bg); }
+
+  /* ---- certs ---- */
+  .cert-list{ display:flex; flex-direction:column; gap:12px; }
+  .cert-row{
+    border:3px solid var(--ink);
+    background: var(--card);
+    padding:16px 20px;
+    display:flex; align-items:center; gap:16px;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+  .cert-icon{
+    width:32px; height:32px; flex-shrink:0;
+    background: var(--coral);
+    border:2px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:13px;
+  }
+  .cert-row h4{ font-size:14px; font-weight:700; }
+  .cert-row .sub{ font-size:12px; color:#555; }
+
+  /* ---- hobbies ---- */
+  .hobby-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; max-width:640px; }
+  @media (max-width:500px){ .hobby-grid{ grid-template-columns:1fr; } }
+  .hobby-card{
+    border:3px solid var(--ink);
+    background: var(--lime);
+    padding:22px;
+    box-shadow: 6px 6px 0 var(--ink);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .hobby-card:nth-child(2){ background: var(--coral); color:#fff; }
+  .hobby-card .ic{ font-size:24px; }
+  .hobby-card h4{ font-size:15px; font-weight:800; }
+  .hobby-card p{ font-size:12.5px; }
+
+  /* ---- contact ---- */
+  .contact-panel{
+    border:var(--border) solid var(--ink);
+    background: var(--blue);
+    color:#fff;
+    box-shadow: 10px 10px 0 var(--ink);
+    padding:48px 34px;
+    text-align:center;
+    margin: 54px 0 60px;
+  }
+  .contact-panel h2{ font-size: clamp(26px,4vw,40px); font-weight:800; }
+  .contact-panel p{ margin-top:12px; opacity:0.9; max-width:480px; margin-left:auto; margin-right:auto; font-size:14px; }
+  .contact-actions{ display:flex; gap:12px; justify-content:center; margin-top:26px; flex-wrap:wrap; }
+  .contact-actions .btn{ background:#fff; color: var(--ink); }
+
+  footer{ text-align:center; padding:26px 0 46px; font-family:'Space Mono',monospace; font-size:11.5px; color:#555; }
+</style>
+</head>
+<body>
+
+<div class="marquee-wrap">
+  <div class="marquee mono">
+    <span>SOFTWARE DEV</span><span class="alt">•</span><span>AI / ML</span><span class="alt">•</span><span>FULL-STACK WEB</span><span class="alt">•</span><span>B.SC IT 2027</span><span class="alt">•</span>
+    <span>SOFTWARE DEV</span><span class="alt">•</span><span>AI / ML</span><span class="alt">•</span><span>FULL-STACK WEB</span><span class="alt">•</span><span>B.SC IT 2027</span><span class="alt">•</span>
+  </div>
+</div>
+
+<main>
+
+  <header>
+    <div class="logo">SHUBHAM<span style="color:var(--coral)">.</span>DEV</div>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#certs">Certs</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-main">
+      <span class="tag mono">OPEN TO INTERNSHIPS</span>
+      <h1>Shubham Chavan builds <span class="hl">stuff that works.</span></h1>
+      <p>B.Sc Information Technology student from Mumbai, into software development, AI, and full-stack web — I learn by shipping real projects, not just reading about them.</p>
+      <div class="hero-actions">
+        <a href="#projects" class="btn solid">View Projects</a>
+        <a href="#contact" class="btn coral">Get In Touch</a>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="stat"><div class="num">2027</div><div class="lbl">Expected Graduation</div></div>
+      <div class="stat"><div class="num">2</div><div class="lbl">Live Projects Shipped</div></div>
+      <div class="stat"><div class="num">4</div><div class="lbl">Certifications Earned</div></div>
+      <div class="stat"><div class="num">Mumbai</div><div class="lbl">Based In, India</div></div>
+    </div>
+  </section>
+
+  <div id="about"></div>
+  <div class="sec-label"><span class="num mono">01</span><h2>About &amp; Education</h2></div>
+  <div class="about-grid">
+    <div class="panel avatar-block reveal">
+      <div class="mono-badge">SC</div>
+      <h3 style="font-size:18px;">Shubham Chavan</h3>
+      <p style="font-size:12.5px; color:#555; margin-top:4px;">Mumbai, Maharashtra, India</p>
+      <div class="lang-row">
+        <span class="pill">EN</span><span class="pill">HI</span><span class="pill">MR</span>
+      </div>
+    </div>
+    <div class="panel reveal">
+      <div class="edu-row">
+        <div><h4>B.Sc. Information Technology</h4><p class="sub">Rajiv Gandhi College, Navi Mumbai</p></div>
+        <span class="score">2027</span>
+      </div>
+      <div class="edu-row">
+        <div><h4>HSC</h4><p class="sub">Higher Secondary Certificate · 2024</p></div>
+        <span class="score">60.00%</span>
+      </div>
+      <div class="edu-row">
+        <div><h4>SSC</h4><p class="sub">Secondary School Certificate · 2022</p></div>
+        <span class="score">63.20%</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="skills"></div>
+  <div class="sec-label"><span class="num mono">02</span><h2>Skills</h2></div>
+  <div class="panel reveal">
+    <div class="skill-block">
+      <span class="cat mono">Programming</span>
+      <div class="chip-row"><span class="chip">Java</span><span class="chip">Python</span><span class="chip">C</span><span class="chip">C++</span><span class="chip">C#</span></div>
+    </div>
+    <div class="skill-block">
+      <span class="cat mono">Web</span>
+      <div class="chip-row"><span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JavaScript</span></div>
+    </div>
+    <div class="skill-block">
+      <span class="cat mono">Currently Learning</span>
+      <div class="chip-row"><span class="chip">.NET</span></div>
+    </div>
+    <div class="skill-block">
+      <span class="cat mono">Tools</span>
+      <div class="chip-row"><span class="chip">VS Code</span><span class="chip">Git</span><span class="chip">GitHub</span></div>
+    </div>
+  </div>
+
+  <div id="projects"></div>
+  <div class="sec-label"><span class="num mono">03</span><h2>Projects</h2></div>
+  <div class="project-grid">
+    <div class="project-card reveal">
+      <div class="project-top chat"><h3 style="font-size:17px;color:#fff;font-weight:800;">AI Chatbot</h3><span class="idx">01</span></div>
+      <div class="project-body">
+        <p>A ChatGPT-style conversational AI assistant with a responsive interface, deployed live on Vercel.</p>
+        <div class="tag-row"><span>AI</span><span>Chat UI</span><span>Vercel</span></div>
+        <div class="project-links">
+          <a href="https://chatbotshubhu.vercel.app" target="_blank" rel="noopener">Live Demo</a>
+          <a href="https://github.com/shubhamchavann" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-top shield"><h3 style="font-size:17px;font-weight:800;">PhishGuard</h3><span class="idx">02</span></div>
+      <div class="project-body">
+        <p>A cybersecurity web app that detects suspicious phishing URLs and scam messages, with a fraud-awareness quiz.</p>
+        <div class="tag-row"><span>Flask</span><span>Security</span><span>Quiz</span></div>
+        <div class="project-links">
+          <a href="https://phishguard-digital.vercel.app" target="_blank" rel="noopener">Live Demo</a>
+          <a href="https://github.com/shubhamchavann" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="certs"></div>
+  <div class="sec-label"><span class="num mono">04</span><h2>Certifications</h2></div>
+  <div class="cert-list reveal">
+    <div class="cert-row"><div class="cert-icon">MS</div><div><h4>Introduction to AI Concepts</h4><p class="sub">Microsoft Learn</p></div></div>
+    <div class="cert-row"><div class="cert-icon">MS</div><div><h4>Introduction to Generative AI and Agents</h4><p class="sub">Microsoft Learn</p></div></div>
+    <div class="cert-row"><div class="cert-icon">MS</div><div><h4>Introduction to Machine Learning Concepts</h4><p class="sub">Microsoft Learn</p></div></div>
+    <div class="cert-row"><div class="cert-icon">LX</div><div><h4>Linux System Administration — Hands-on Session</h4><p class="sub">Certificate of Participation · 30 July 2026</p></div></div>
+  </div>
+
+  <div id="hobbies-anchor"></div>
+  <div class="sec-label"><span class="num mono">05</span><h2>Beyond Code</h2></div>
+  <div class="hobby-grid reveal">
+    <div class="hobby-card"><span class="ic">🎵</span><h4>Listening to Music</h4><p>Unwinding between coding sessions</p></div>
+    <div class="hobby-card"><span class="ic">🎮</span><h4>Playing Games</h4><p>Gaming to relax and reset</p></div>
+  </div>
+
+  <div id="contact"></div>
+  <div class="contact-panel reveal">
+    <h2>Let's build something.</h2>
+    <p>Open to internships in software development, AI, and full-stack web. Reach out — I reply fast.</p>
+    <div class="contact-actions">
+      <a href="mailto:shubhamdc2006@gmail.com" class="btn">Email Me</a>
+      <a href="https://github.com/shubhamchavann" target="_blank" rel="noopener" class="btn">GitHub</a>
+      <a href="https://www.linkedin.com/in/shubham-chavan-08193b361" target="_blank" rel="noopener" class="btn">LinkedIn</a>
+    </div>
+  </div>
+
+  <footer>&copy; 2026 SHUBHAM CHAVAN — BUILT WITH HTML, CSS &amp; A LOT OF ATTITUDE</footer>
+
+</main>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>

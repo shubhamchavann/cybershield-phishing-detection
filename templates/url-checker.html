@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>URL Scanner - Cyber Shield</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        🛡️ Cyber Shield
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+        <a href="/url-checker">URL Scanner</a>
+        <a href="/message-checker">Message Scanner</a>
+        <a href="/awareness">Awareness</a>
+        <a href="/quiz">Quiz</a>
+
+    </div>
+
+</nav>
+
+
+<main class="container">
+
+    <div class="page-header">
+
+        <div class="tag">
+            🔗 URL SECURITY SCANNER
+        </div>
+
+        <h1>
+            Check a Suspicious URL
+        </h1>
+
+        <p>
+            Enter a website URL to analyze
+            common phishing indicators.
+        </p>
+
+    </div>
+
+
+    <div class="form-card">
+
+        <form method="POST">
+
+            <div class="form-group">
+
+                <label for="url">
+                    Website URL
+                </label>
+
+                <input
+                    type="url"
+                    id="url"
+                    name="url"
+                    placeholder="Example: https://example.com"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn">
+                🔍 Scan URL
+            </button>
+
+            <a
+                href="/url-checker"
+                class="btn btn-secondary">
+                Clear
+            </a>
+
+        </form>
+
+    </div>
+
+
+    {% if result %}
+
+    <div class="result">
+
+        <h2>
+            Analysis Result
+        </h2>
+
+        <div class="score
+            {% if result.risk == 'HIGH RISK' %}
+                high
+            {% elif result.risk == 'MEDIUM RISK' %}
+                medium
+            {% else %}
+                low
+            {% endif %}
+        ">
+
+            {{ result.score }}%
+
+        </div>
+
+
+        <h2>
+            {{ result.risk }}
+        </h2>
+
+
+        <div class="indicators">
+
+            <h3>
+                Detected Indicators
+            </h3>
+
+            <ul>
+
+                {% for indicator in result.indicators %}
+
+                <li>
+                    {{ indicator }}
+                </li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</main>
+
+
+<footer class="footer">
+
+    Cyber Shield — Stay Safe Online
+
+</footer>
+
+</body>
+
+</html>

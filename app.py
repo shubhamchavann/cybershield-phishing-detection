@@ -1,228 +1,379 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-import hashlib
-import os
-from detector import CyberDetector
-import database as db
+from flask import Flask, render_template, request, redirect, url_for
+import sqlite3
+from datetime import datetime
+from detector import scan_url, scan_message
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "phishguard-secure-secret-key-2026")
 
-# Initialize SQLite database schema
-db.init_db()
+# =========================================================
+# DATABASE
+# =========================================================
 
-detector = CyberDetector()
+DATABASE = "cyber_shield.db"
 
-# ==========================================
-# AUTHENTICATION HELPERS
-# ==========================================
 
-def hash_password(password):
-    """Securely hash a password using standard PBKDF2 with SHA-256."""
-    salt = os.urandom(16)
-    pw_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
-    return salt.hex() + ":" + pw_hash.hex()
+def get_db():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-def verify_password(stored_pw, provided_pw):
-    """Verify a password hash against the user's provided password."""
-    try:
-        salt_hex, hash_hex = stored_pw.split(":")
-        salt = bytes.fromhex(salt_hex)
-        pw_hash = hashlib.pbkdf2_hmac('sha256', provided_pw.encode(), salt, 100000)
-        return pw_hash.hex() == hash_hex
-    except Exception:
-        return False
 
-# Inject active page variable and user info in Jinja context
-@app.context_processor
-def inject_globals():
-    return {
-        "active_page": None
-    }
+def init_db():
+    conn = get_db()
 
-# ==========================================
-# WEB PAGE ROUTING
-# ==========================================
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            scam_type TEXT NOT NULL,
+            content TEXT NOT NULL,
+            description TEXT,
+            created_at TEXT NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+# =========================================================
+# HOME PAGE
+# =========================================================
 
 @app.route("/")
-@app.route("/dashboard")
 def home():
-    """Render the dashboard hub with recent scans and dynamic database stats."""
-    # Fetch stats
-    stats = db.get_stats()
-    
-    # Fetch scan history (personalized if logged in, otherwise global)
-    if session.get("user_id"):
-        recent_scans = db.get_scans_by_user(session["user_id"])
-    else:
-        recent_scans = db.get_recent_scans(limit=10)
-        
-    return render_template(
-        "index.html",
-        stats=stats,
-        recent_scans=recent_scans,
-        active_page="home"
-    )
+    return render_template("index.html")
 
-@app.route("/report", methods=["GET", "POST"])
-def report_scam():
-    """Render the scam submission form and process threat logs."""
-    success = False
-    user_id = session.get("user_id") # Nullable if guest
-    
+
+# =========================================================
+# URL SCANNER
+# =========================================================
+
+@app.route("/url-checker", methods=["GET", "POST"])
+def url_checker():
+
+    result = None
+
     if request.method == "POST":
-        report_type = request.form.get("report_type")
-        description = request.form.get("description", "")
-        
-        if report_type == "url":
-            content = request.form.get("content_url", "").strip()
+
+        url = request.form.get("url", "").strip()
+
+        if not url:
+            result = {
+                "error": "Please enter a URL."
+            }
+
         else:
-            content = request.form.get("content_message", "").strip()
-            
-        if content:
-            db.save_report(user_id, report_type, content, description)
-            success = True
-            
-    # Fetch all reported threats to display on side panel
-    reports = db.get_all_reports()
-    
+            result = scan_url(url)
+
     return render_template(
-        "report.html",
-        reports=reports,
-        success=success,
-        active_page="report"
+        "url-checker.html",
+        result=result
     )
 
-@app.route("/learn")
+
+# =========================================================
+# MESSAGE SCANNER
+# =========================================================
+
+@app.route("/message-checker", methods=["GET", "POST"])
+def message_checker():
+
+    result = None
+
+    if request.method == "POST":
+
+        message = request.form.get("message", "").strip()
+
+        if not message:
+
+            result = {
+                "error": "Please enter a message."
+            }
+
+        else:
+
+            result = scan_message(message)
+
+    return render_template(
+        "message-checker.html",
+        result=result
+    )
+
+
+# =========================================================
+# AWARENESS PAGE
+# =========================================================
+
 @app.route("/awareness")
 def awareness():
-    """Render educational awareness and tactics accordion."""
-    return render_template("learn.html", active_page="learn")
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    """Authenticate registered users."""
-    error = None
-    if request.method == "POST":
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
-        
-        user = db.get_user_by_email(email)
-        if user and verify_password(user["password_hash"], password):
-            session["user_id"] = user["id"]
-            session["user_email"] = user["email"]
-            return redirect(url_for("home"))
-        else:
-            error = "Invalid email or password. Please verify credentials."
-            
-    return render_template("login.html", error=error, active_page="login")
+    return render_template("awareness.html")
 
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    """Register new threat console user account."""
-    error = None
-    if request.method == "POST":
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
-        confirm_password = request.form.get("confirm_password", "")
-        
-        if not email or not password:
-            error = "All fields are required."
-        elif len(password) < 8:
-            error = "Password must be at least 8 characters long."
-        elif password != confirm_password:
-            error = "Passwords do not match."
-        else:
-            hashed = hash_password(password)
-            user_id = db.create_user(email, hashed)
-            if user_id:
-                session["user_id"] = user_id
-                session["user_email"] = email
-                return redirect(url_for("home"))
-            else:
-                error = "An account with this email already exists."
-                
-    return render_template("signup.html", error=error, active_page="login")
 
-@app.route("/logout")
-def logout():
-    """Destroy user session logs."""
-    session.clear()
-    return redirect(url_for("home"))
+# =========================================================
+# QUIZ
+# =========================================================
 
-# Backward compatibility redirects for legacy paths
-@app.route("/url-checker")
-@app.route("/url")
-def url_checker():
-    """Redirect to dashboard with URL tab focused."""
-    return redirect(url_for("home", tab="url"))
-
-@app.route("/messages")
-def messages():
-    """Redirect to dashboard with Message tab focused."""
-    return redirect(url_for("home", tab="message"))
-
-@app.route("/quiz")
+@app.route("/quiz", methods=["GET", "POST"])
 def quiz():
-    """Redirect quiz link to learning resources."""
-    return redirect(url_for("awareness"))
 
-# ==========================================
-# HEURISTIC ANALYZER JSON ENDPOINTS (AJAX)
-# ==========================================
+    # -----------------------------
+    # QUESTIONS
+    # -----------------------------
 
-@app.route("/api/scan/url", methods=["POST"])
-def api_scan_url():
-    """Perform real-time heuristic URL scan and record log in database."""
-    data = request.get_json() or {}
-    url = data.get("url", "").strip()
-    
-    if not url:
-        return jsonify({"error": "No URL provided"}), 400
-        
-    result = detector.check_url(url)
-    user_id = session.get("user_id") # Nullable if guest
-    
-    # Save log to DB
-    db.save_scan(
-        user_id=user_id,
-        scan_type="url",
-        input_content=url,
-        risk_score=result["score"],
-        verdict=result["level"],
-        red_flags=result["reasons"]
+    questions = [
+
+        {
+            "question": "What is phishing?",
+            "options": [
+                "A computer hardware problem",
+                "An attempt to trick users into revealing sensitive information",
+                "A type of antivirus"
+            ],
+            "answer": 1
+        },
+
+        {
+            "question": "Someone claiming to be from your bank asks for your OTP. What should you do?",
+            "options": [
+                "Give them the OTP",
+                "Refuse and verify through the bank's official contact channel",
+                "Send your password instead"
+            ],
+            "answer": 1
+        },
+
+        {
+            "question": "Which is a common phishing warning sign?",
+            "options": [
+                "An unexpected urgent request",
+                "A normal greeting from a friend",
+                "A regular software update"
+            ],
+            "answer": 0
+        },
+
+        {
+            "question": "What should you do before clicking a suspicious link?",
+            "options": [
+                "Click immediately",
+                "Verify the URL",
+                "Share it with friends"
+            ],
+            "answer": 1
+        },
+
+        {
+            "question": "Should you share your OTP with someone who calls you?",
+            "options": [
+                "Yes",
+                "Only if they know your name",
+                "No"
+            ],
+            "answer": 2
+        },
+
+        {
+            "question": "What does HTTPS indicate?",
+            "options": [
+                "The connection uses encryption",
+                "The website is always safe",
+                "The website cannot be hacked"
+            ],
+            "answer": 0
+        },
+
+        {
+            "question": "Which information should you never share with strangers?",
+            "options": [
+                "OTP and passwords",
+                "Public website address",
+                "Weather information"
+            ],
+            "answer": 0
+        },
+
+        {
+            "question": "What is smishing?",
+            "options": [
+                "Phishing through SMS or text messages",
+                "A computer virus",
+                "A type of firewall"
+            ],
+            "answer": 0
+        },
+
+        {
+            "question": "What should you do if you receive a suspicious banking message?",
+            "options": [
+                "Click the link",
+                "Verify using the bank's official website or app",
+                "Reply with your PIN"
+            ],
+            "answer": 1
+        },
+
+        {
+            "question": "Why do scammers create urgency?",
+            "options": [
+                "To make users think carefully",
+                "To make users act quickly without checking",
+                "To improve website speed"
+            ],
+            "answer": 1
+        }
+
+    ]
+
+    # =====================================================
+    # SHOW QUIZ
+    # =====================================================
+
+    if request.method == "GET":
+
+        return render_template(
+            "quiz.html",
+            questions=questions,
+            score=None
+        )
+
+    # =====================================================
+    # CALCULATE SCORE
+    # =====================================================
+
+    score = 0
+
+    for i, question in enumerate(questions):
+
+        selected = request.form.get(f"q{i}")
+
+        if selected is not None:
+
+            try:
+
+                if int(selected) == question["answer"]:
+                    score += 1
+
+            except ValueError:
+                pass
+
+    percentage = int((score / len(questions)) * 100)
+
+    return render_template(
+        "quiz.html",
+        questions=questions,
+        score=score,
+        total=len(questions),
+        percentage=percentage
     )
-    
-    return jsonify(result)
 
-@app.route("/api/scan/message", methods=["POST"])
-def api_scan_message():
-    """Perform language heuristic check on message contents and log."""
-    data = request.get_json() or {}
-    message = data.get("message", "").strip()
-    
-    if not message:
-        return jsonify({"error": "No message body provided"}), 400
-        
-    result = detector.check_message(message)
-    user_id = session.get("user_id") # Nullable if guest
-    
-    # Save log to DB
-    db.save_scan(
-        user_id=user_id,
-        scan_type="message",
-        input_content=message[:200] + ("..." if len(message) > 200 else ""),
-        risk_score=result["score"],
-        verdict=result["level"],
-        red_flags=result["detected"]
+
+# =========================================================
+# REPORT SCAM PAGE
+# =========================================================
+
+@app.route("/report-scam", methods=["GET", "POST"])
+def report_scam():
+
+    message = None
+
+    if request.method == "POST":
+
+        scam_type = request.form.get(
+            "scam_type",
+            ""
+        ).strip()
+
+        content = request.form.get(
+            "content",
+            ""
+        ).strip()
+
+        description = request.form.get(
+            "description",
+            ""
+        ).strip()
+
+        if not scam_type or not content:
+
+            message = "Please fill in all required fields."
+
+        else:
+
+            conn = get_db()
+
+            conn.execute(
+                """
+                INSERT INTO reports
+                (scam_type, content, description, created_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    scam_type,
+                    content,
+                    description,
+                    datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+                )
+            )
+
+            conn.commit()
+            conn.close()
+
+            message = "Scam report submitted successfully."
+
+    return render_template(
+        "report-scam.html",
+        message=message
     )
-    
-    return jsonify(result)
 
-# ==========================================
-# SYSTEM EXECUTION
-# ==========================================
+
+# =========================================================
+# VIEW COMMUNITY REPORTS
+# =========================================================
+
+@app.route("/reports")
+def reports():
+
+    conn = get_db()
+
+    reports = conn.execute(
+        """
+        SELECT *
+        FROM reports
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    conn.close()
+
+    return render_template(
+        "reports.html",
+        reports=reports
+    )
+
+
+# =========================================================
+# OFFICIAL CYBER SAFETY INFORMATION
+# =========================================================
+
+@app.route("/cyber-help")
+def cyber_help():
+
+    return render_template(
+        "cyber-help.html"
+    )
+
+
+# =========================================================
+# RUN APPLICATION
+# =========================================================
 
 if __name__ == "__main__":
+
+    init_db()
+
     app.run(
         debug=True,
         host="127.0.0.1",
