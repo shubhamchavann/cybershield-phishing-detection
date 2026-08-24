@@ -62,4 +62,26 @@ document.addEventListener(
         });
 
     }
-);
+);function clearForm() {
+
+    const form = document.querySelector(".scanner-form");
+
+    if (!form) {
+        return;
+    }
+
+    form.reset();
+
+    const result = document.querySelector(".result-box");
+
+    if (result) {
+        result.style.display = "none";
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("Cyber Shield loaded successfully.");
+
+});

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="scanner-page">
+
+    <p class="tag">
+        🚨 COMMUNITY SCAM REPORT
+    </p>
+
+    <h1>
+        Report a Scam
+    </h1>
+
+    <p>
+        Report suspicious websites, messages or online scams
+        so other users can be aware of them.
+    </p>
+
+
+    {% if success %}
+
+    <div class="success-box">
+
+        ✅ Report submitted successfully!
+
+        <br><br>
+
+        <a href="{{ url_for('reports') }}">
+            View Community Reports →
+        </a>
+
+    </div>
+
+    {% endif %}
+
+
+    <form method="POST"
+          class="report-form">
+
+        <label>
+            Scam Type
+        </label>
+
+        <select name="category" required>
+
+            <option value="">
+                Select scam type
+            </option>
+
+            <option value="Phishing Website">
+                Phishing Website
+            </option>
+
+            <option value="SMS Scam">
+                SMS Scam
+            </option>
+
+            <option value="WhatsApp Scam">
+                WhatsApp Scam
+            </option>
+
+            <option value="Banking Scam">
+                Banking Scam
+            </option>
+
+            <option value="UPI Scam">
+                UPI Scam
+            </option>
+
+            <option value="Job Scam">
+                Job Scam
+            </option>
+
+            <option value="Prize Scam">
+                Prize / Lottery Scam
+            </option>
+
+            <option value="Other">
+                Other
+            </option>
+
+        </select>
+
+
+        <label>
+            Website / Phone Number / Message Identifier
+        </label>
+
+        <input
+            type="text"
+            name="target"
+            placeholder="Example: suspicious-site.com"
+            required
+        >
+
+
+        <label>
+            Describe the Scam
+        </label>
+
+        <textarea
+            name="description"
+            rows="7"
+            placeholder="Explain what happened..."
+            required></textarea>
+
+
+        <button type="submit"
+                class="btn">
+
+            🚨 Submit Report
+
+        </button>
+
+    </form>
+
+
+    <div class="info-box">
+
+        <h2>
+            Important
+        </h2>
+
+        <p>
+            Do not enter passwords, OTPs, CVV numbers,
+            UPI PINs or other private information in this form.
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

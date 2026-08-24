@@ -1,133 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block content %}
 
-    <meta charset="UTF-8">
+<section class="scanner-page">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Scam Reports - Cyber Shield</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
-</head>
-
-<body>
-
-<nav class="navbar">
-
-    <div class="logo">
-        🛡️ Cyber Shield
-    </div>
-
-    <div class="nav-links">
-
-        <a href="/">Home</a>
-
-        <a href="/report-scam">
-            Report Scam
-        </a>
-
-        <a href="/cyber-help">
-            Cyber Help
-        </a>
-
-    </div>
-
-</nav>
-
-
-<main class="container">
-
-    <p class="small-title">
-        COMMUNITY ALERTS
+    <p class="tag">
+        🌐 COMMUNITY DATABASE
     </p>
 
     <h1>
-        🚨 Reported Scams
+        Reported Scams
     </h1>
 
     <p>
-        These reports are shared to increase
-        cybersecurity awareness.
+        These reports are shared to increase awareness
+        about suspicious websites, messages and scams.
     </p>
 
 
     {% if reports %}
 
-        <div class="reports-container">
+    <div class="reports-list">
 
         {% for report in reports %}
 
-            <div class="report-card">
+        <div class="report-card">
 
-                <div class="report-header">
+            <div class="report-header">
 
-                    <h2>
-                        {{ report["scam_type"] }}
-                    </h2>
+                <span class="report-category">
+                    {{ report["category"] }}
+                </span>
 
-                    <span>
-                        {{ report["created_at"] }}
-                    </span>
-
-                </div>
-
-
-                <p>
-                    {{ report["description"] }}
-                </p>
-
-
-                {% if report["contact"] %}
-
-                <div class="report-contact">
-
-                    <strong>
-                        Related Information:
-                    </strong>
-
-                    <p>
-                        {{ report["contact"] }}
-                    </p>
-
-                </div>
-
-                {% endif %}
+                <span>
+                    {{ report["created_at"] }}
+                </span>
 
             </div>
 
-        {% endfor %}
+
+            <h2>
+                🚨 {{ report["target"] }}
+            </h2>
+
+
+            <p>
+                {{ report["description"] }}
+            </p>
 
         </div>
+
+        {% endfor %}
+
+    </div>
+
 
     {% else %}
 
-        <div class="result">
+    <div class="info-box">
 
-            <h2>
-                No reports yet
-            </h2>
+        <h2>
+            No reports yet
+        </h2>
 
-            <p>
-                Be the first person to report
-                a suspicious scam.
-            </p>
+        <p>
+            Be the first person to report a suspicious scam.
+        </p>
 
-            <a href="/report-scam"
-               class="button">
-                Report a Scam
-            </a>
-
-        </div>
+    </div>
 
     {% endif %}
 
-</main>
+</section>
 
-</body>
-
-</html>
+{% endblock %}

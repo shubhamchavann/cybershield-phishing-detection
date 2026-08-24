@@ -1,725 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block content %}
 
-    <meta charset="UTF-8">
+<section class="quiz-page">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <p class="tag">
+        🧠 CYBERSECURITY QUIZ
+    </p>
 
-    <title>Cyber Quiz - Cyber Shield</title>
+    <h1>
+        How Cyber-Smart Are You?
+    </h1>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
-</head>
-
-<body>
-
-<nav class="navbar">
-
-    <div class="logo">
-        🛡️ Cyber Shield
-    </div>
-
-    <div class="nav-links">
-
-        <a href="/">Home</a>
-        <a href="/url-checker">URL Scanner</a>
-        <a href="/message-checker">Message Scanner</a>
-        <a href="/awareness">Awareness</a>
-        <a href="/quiz">Quiz</a>
-
-    </div>
-
-</nav>
-
-
-<main class="container quiz-container">
-
-    <div class="page-header">
-
-        <div class="tag">
-            🧠 CYBERSECURITY QUIZ
-        </div>
-
-        <h1>
-            How Cyber-Smart Are You?
-        </h1>
-
-        <p>
-            Answer 10 questions and test
-            your phishing awareness.
-        </p>
-
-    </div>
-
-
-    <form method="POST">
-
-
-        <!-- QUESTION 1 -->
-
-        <div class="question">
-
-            <h2>
-                1. What is phishing?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q1a"
-                    name="q1"
-                    value="a"
-                    required
-                >
-
-                <label for="q1a">
-                    A computer hardware problem
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q1b"
-                    name="q1"
-                    value="b"
-                >
-
-                <label for="q1b">
-                    An attempt to trick users into
-                    revealing sensitive information
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q1c"
-                    name="q1"
-                    value="c"
-                >
-
-                <label for="q1c">
-                    A type of antivirus
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 2 -->
-
-        <div class="question">
-
-            <h2>
-                2. Someone claiming to be from your
-                bank asks for your OTP. What should
-                you do?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q2a"
-                    name="q2"
-                    value="a"
-                    required
-                >
-
-                <label for="q2a">
-                    Give them the OTP
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q2b"
-                    name="q2"
-                    value="b"
-                >
-
-                <label for="q2b">
-                    Refuse and verify through the
-                    bank's official contact channel
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q2c"
-                    name="q2"
-                    value="c"
-                >
-
-                <label for="q2c">
-                    Send your password instead
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 3 -->
-
-        <div class="question">
-
-            <h2>
-                3. Which is a common phishing warning sign?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q3a"
-                    name="q3"
-                    value="a"
-                    required
-                >
-
-                <label for="q3a">
-                    An unexpected urgent request
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q3b"
-                    name="q3"
-                    value="b"
-                >
-
-                <label for="q3b">
-                    A normal greeting from a friend
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q3c"
-                    name="q3"
-                    value="c"
-                >
-
-                <label for="q3c">
-                    A regular website visit
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 4 -->
-
-        <div class="question">
-
-            <h2>
-                4. What should you do before
-                clicking a suspicious link?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q4a"
-                    name="q4"
-                    value="a"
-                    required
-                >
-
-                <label for="q4a">
-                    Click it immediately
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q4b"
-                    name="q4"
-                    value="b"
-                >
-
-                <label for="q4b">
-                    Forward it to everyone
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q4c"
-                    name="q4"
-                    value="c"
-                >
-
-                <label for="q4c">
-                    Verify the website address
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 5 -->
-
-        <div class="question">
-
-            <h2>
-                5. Which information should never
-                be shared with strangers?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q5a"
-                    name="q5"
-                    value="a"
-                    required
-                >
-
-                <label for="q5a">
-                    Your favorite color
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q5b"
-                    name="q5"
-                    value="b"
-                >
-
-                <label for="q5b">
-                    OTP, password and PIN
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q5c"
-                    name="q5"
-                    value="c"
-                >
-
-                <label for="q5c">
-                    Your favorite food
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 6 -->
-
-        <div class="question">
-
-            <h2>
-                6. What does HTTPS indicate?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q6a"
-                    name="q6"
-                    value="a"
-                    required
-                >
-
-                <label for="q6a">
-                    Encrypted communication
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q6b"
-                    name="q6"
-                    value="b"
-                >
-
-                <label for="q6b">
-                    The website is always safe
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q6c"
-                    name="q6"
-                    value="c"
-                >
-
-                <label for="q6c">
-                    The website is free
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 7 -->
-
-        <div class="question">
-
-            <h2>
-                7. What should you do with a suspicious email?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q7a"
-                    name="q7"
-                    value="a"
-                    required
-                >
-
-                <label for="q7a">
-                    Reply with your personal details
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q7b"
-                    name="q7"
-                    value="b"
-                >
-
-                <label for="q7b">
-                    Click all links
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q7c"
-                    name="q7"
-                    value="c"
-                >
-
-                <label for="q7c">
-                    Report or delete it
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 8 -->
-
-        <div class="question">
-
-            <h2>
-                8. Why do scammers create urgency?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q8a"
-                    name="q8"
-                    value="a"
-                    required
-                >
-
-                <label for="q8a">
-                    To give users more time
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q8b"
-                    name="q8"
-                    value="b"
-                >
-
-                <label for="q8b">
-                    To make users act without thinking
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q8c"
-                    name="q8"
-                    value="c"
-                >
-
-                <label for="q8c">
-                    To improve security
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 9 -->
-
-        <div class="question">
-
-            <h2>
-                9. What is a strong password?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q9a"
-                    name="q9"
-                    value="a"
-                    required
-                >
-
-                <label for="q9a">
-                    A long and unique password
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q9b"
-                    name="q9"
-                    value="b"
-                >
-
-                <label for="q9b">
-                    Your name and birth year
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q9c"
-                    name="q9"
-                    value="c"
-                >
-
-                <label for="q9c">
-                    123456
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <!-- QUESTION 10 -->
-
-        <div class="question">
-
-            <h2>
-                10. What is the safest response to
-                an unknown prize message?
-            </h2>
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q10a"
-                    name="q10"
-                    value="a"
-                    required
-                >
-
-                <label for="q10a">
-                    Pay the processing fee
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q10b"
-                    name="q10"
-                    value="b"
-                >
-
-                <label for="q10b">
-                    Share your bank details
-                </label>
-
-            </div>
-
-
-            <div class="option">
-
-                <input
-                    type="radio"
-                    id="q10c"
-                    name="q10"
-                    value="c"
-                >
-
-                <label for="q10c">
-                    Ignore and report the message
-                </label>
-
-            </div>
-
-        </div>
-
-
-        <button
-            type="submit"
-            class="btn">
-            🧠 Submit Quiz
-        </button>
-
-
-    </form>
+    <p>
+        Answer 10 questions and test your phishing awareness.
+    </p>
 
 
     {% if score is not none %}
 
-    <div class="quiz-result">
+    <div class="score-box">
 
         <h2>
-            Quiz Completed 🎉
+            Your Score
         </h2>
 
-        <div class="quiz-score">
-            {{ score }}/10
-        </div>
+        <p class="big-score">
+            {{ score }} / {{ questions|length }}
+        </p>
 
         {% if score >= 8 %}
 
-        <p>
-            Excellent! You have strong cybersecurity awareness.
-        </p>
+            <p>
+                🎉 Excellent! You have strong cybersecurity awareness.
+            </p>
 
         {% elif score >= 5 %}
 
-        <p>
-            Good job! But you should improve your phishing awareness.
-        </p>
+            <p>
+                👍 Good job! Keep improving your cybersecurity knowledge.
+            </p>
 
         {% else %}
 
-        <p>
-            You should review the Awareness section
-            and learn more about phishing.
-        </p>
+            <p>
+                📚 Keep learning about phishing and online safety.
+            </p>
 
         {% endif %}
-
-        <br>
-
-        <a
-            href="/quiz"
-            class="btn">
-            Try Again
-        </a>
-
+fix
     </div>
 
     {% endif %}
 
-</main>
+
+    <form method="POST">
+
+        {% for question in questions %}
+
+        {% set question_number = loop.index0 %}
+
+        <div class="question">
+
+            <h3>
+                {{ loop.index }}. {{ question.question }}
+            </h3>
 
 
-<footer class="footer">
+            {% for option in question.options %}
 
-    Cyber Shield — Learn. Detect. Stay Safe.
+            <label class="option">
 
-</footer>
+                <input
+                    type="radio"
+                    name="question_{{ question_number }}"
+                    value="{{ loop.index0 }}"
+                    required
+                >
 
-</body>
+                {{ option }}
 
-</html>
+            </label>
+
+            {% endfor %}
+
+        </div>
+
+        {% endfor %}
+
+
+        <button type="submit"
+                class="btn">
+
+            Submit Quiz
+
+        </button>
+
+    </form>
+
+</section>
+
+    {% endblock %}

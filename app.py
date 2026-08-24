@@ -1,128 +1,123 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import sqlite3
 from datetime import datetime
+
 from detector import scan_url, scan_message
 
-app = Flask(__name__)
 
-# =========================================================
-# DATABASE
-# =========================================================
+app = Flask(__name__)
 
 DATABASE = "cyber_shield.db"
 
 
+# =================================================
+# DATABASE
+# =================================================
+
 def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+    connection = sqlite3.connect(DATABASE)
+    connection.row_factory = sqlite3.Row
+    return connection
 
 
 def init_db():
-    conn = get_db()
 
-    conn.execute("""
+    connection = get_db()
+
+    connection.execute("""
         CREATE TABLE IF NOT EXISTS reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            scam_type TEXT NOT NULL,
-            content TEXT NOT NULL,
-            description TEXT,
+            category TEXT NOT NULL,
+            target TEXT NOT NULL,
+            description TEXT NOT NULL,
             created_at TEXT NOT NULL
         )
     """)
 
-    conn.commit()
-    conn.close()
+    connection.commit()
+    connection.close()
 
 
-# =========================================================
-# HOME PAGE
-# =========================================================
+# =================================================
+# HOME
+# =================================================
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
-# =========================================================
+# =================================================
 # URL SCANNER
-# =========================================================
+# =================================================
 
 @app.route("/url-checker", methods=["GET", "POST"])
 def url_checker():
 
     result = None
+    url = ""
 
     if request.method == "POST":
 
         url = request.form.get("url", "").strip()
 
-        if not url:
-            result = {
-                "error": "Please enter a URL."
-            }
-
-        else:
+        if url:
             result = scan_url(url)
 
     return render_template(
-        "url-checker.html",
-        result=result
+        "url_checker.html",
+        result=result,
+        url=url
     )
 
 
-# =========================================================
+# =================================================
 # MESSAGE SCANNER
-# =========================================================
+# =================================================
 
 @app.route("/message-checker", methods=["GET", "POST"])
 def message_checker():
 
     result = None
+    message = ""
 
     if request.method == "POST":
 
-        message = request.form.get("message", "").strip()
+        message = request.form.get(
+            "message",
+            ""
+        ).strip()
 
-        if not message:
-
-            result = {
-                "error": "Please enter a message."
-            }
-
-        else:
-
+        if message:
             result = scan_message(message)
 
     return render_template(
-        "message-checker.html",
-        result=result
+        "message_checker.html",
+        result=result,
+        message=message
     )
 
 
-# =========================================================
-# AWARENESS PAGE
-# =========================================================
+# =================================================
+# AWARENESS
+# =================================================
 
 @app.route("/awareness")
 def awareness():
 
-    return render_template("awareness.html")
+    return render_template(
+        "awareness.html"
+    )
 
 
-# =========================================================
+# =================================================
 # QUIZ
-# =========================================================
+# =================================================
 
 @app.route("/quiz", methods=["GET", "POST"])
 def quiz():
 
-    # -----------------------------
-    # QUESTIONS
-    # -----------------------------
-
     questions = [
-
         {
             "question": "What is phishing?",
             "options": [
@@ -148,47 +143,57 @@ def quiz():
             "options": [
                 "An unexpected urgent request",
                 "A normal greeting from a friend",
-                "A regular software update"
+                "A website you regularly use"
             ],
             "answer": 0
         },
 
         {
-            "question": "What should you do before clicking a suspicious link?",
-            "options": [
-                "Click immediately",
-                "Verify the URL",
-                "Share it with friends"
-            ],
-            "answer": 1
-        },
-
-        {
-            "question": "Should you share your OTP with someone who calls you?",
+            "question": "Should you share your UPI PIN with someone?",
             "options": [
                 "Yes",
-                "Only if they know your name",
+                "Only with bank employees",
                 "No"
             ],
             "answer": 2
         },
 
         {
-            "question": "What does HTTPS indicate?",
+            "question": "What should you check before clicking a suspicious link?",
+            "options": [
+                "The domain name",
+                "The screen brightness",
+                "The phone wallpaper"
+            ],
+            "answer": 0
+        },
+
+        {
+            "question": "What does HTTPS generally indicate?",
             "options": [
                 "The connection uses encryption",
-                "The website is always safe",
+                "The website is always legitimate",
                 "The website cannot be hacked"
             ],
             "answer": 0
         },
 
         {
-            "question": "Which information should you never share with strangers?",
+            "question": "What should you do if you receive a suspicious banking message?",
             "options": [
-                "OTP and passwords",
-                "Public website address",
-                "Weather information"
+                "Click the link immediately",
+                "Verify through the bank's official website or app",
+                "Forward it to everyone"
+            ],
+            "answer": 1
+        },
+
+        {
+            "question": "Which information should you never share through an unsolicited message?",
+            "options": [
+                "OTP and PIN",
+                "Weather information",
+                "Public news"
             ],
             "answer": 0
         },
@@ -197,95 +202,71 @@ def quiz():
             "question": "What is smishing?",
             "options": [
                 "Phishing through SMS or text messages",
-                "A computer virus",
-                "A type of firewall"
+                "A type of computer virus",
+                "A secure login method"
             ],
             "answer": 0
         },
 
         {
-            "question": "What should you do if you receive a suspicious banking message?",
+            "question": "What is the safest response to an unexpected prize message?",
             "options": [
-                "Click the link",
-                "Verify using the bank's official website or app",
-                "Reply with your PIN"
+                "Pay the processing fee",
+                "Share your bank details",
+                "Verify independently and avoid suspicious links"
             ],
-            "answer": 1
-        },
-
-        {
-            "question": "Why do scammers create urgency?",
-            "options": [
-                "To make users think carefully",
-                "To make users act quickly without checking",
-                "To improve website speed"
-            ],
-            "answer": 1
+            "answer": 2
         }
-
     ]
 
-    # =====================================================
-    # SHOW QUIZ
-    # =====================================================
+    score = None
 
-    if request.method == "GET":
+    if request.method == "POST":
 
-        return render_template(
-            "quiz.html",
-            questions=questions,
-            score=None
-        )
+        score = 0
 
-    # =====================================================
-    # CALCULATE SCORE
-    # =====================================================
+        for index, question in enumerate(questions):
 
-    score = 0
+            answer = request.form.get(
+                f"question_{index}"
+            )
 
-    for i, question in enumerate(questions):
+            if answer is not None:
 
-        selected = request.form.get(f"q{i}")
+                try:
+                    answer = int(answer)
 
-        if selected is not None:
+                    if answer == question["answer"]:
+                        score += 1
 
-            try:
-
-                if int(selected) == question["answer"]:
-                    score += 1
-
-            except ValueError:
-                pass
-
-    percentage = int((score / len(questions)) * 100)
+                except ValueError:
+                    pass
 
     return render_template(
         "quiz.html",
         questions=questions,
-        score=score,
-        total=len(questions),
-        percentage=percentage
+        score=score
     )
 
 
-# =========================================================
-# REPORT SCAM PAGE
-# =========================================================
+# =================================================
+# REPORT SCAM
+# =================================================
 
-@app.route("/report-scam", methods=["GET", "POST"])
-def report_scam():
+@app.route("/report", methods=["GET", "POST"])
+def report():
 
-    message = None
+    success = False
 
     if request.method == "POST":
 
-        scam_type = request.form.get(
-            "scam_type",
+        category = request.form.get(
+            "category",
             ""
         ).strip()
 
-        content = request.form.get(
-            "content",
+        target = request.form.get(
+            "target",
             ""
         ).strip()
 
@@ -294,23 +275,19 @@ def report_scam():
             ""
         ).strip()
 
-        if not scam_type or not content:
+        if category and target and description:
 
-            message = "Please fill in all required fields."
+            connection = get_db()
 
-        else:
-
-            conn = get_db()
-
-            conn.execute(
+            connection.execute(
                 """
                 INSERT INTO reports
-                (scam_type, content, description, created_at)
+                (category, target, description, created_at)
                 VALUES (?, ?, ?, ?)
                 """,
                 (
-                    scam_type,
-                    content,
+                    category,
+                    target,
                     description,
                     datetime.now().strftime(
                         "%Y-%m-%d %H:%M:%S"
@@ -318,27 +295,27 @@ def report_scam():
                 )
             )
 
-            conn.commit()
-            conn.close()
+            connection.commit()
+            connection.close()
 
-            message = "Scam report submitted successfully."
+            success = True
 
     return render_template(
-        "report-scam.html",
-        message=message
+        "report.html",
+        success=success
     )
 
 
-# =========================================================
+# =================================================
 # VIEW COMMUNITY REPORTS
-# =========================================================
+# =================================================
 
 @app.route("/reports")
 def reports():
 
-    conn = get_db()
+    connection = get_db()
 
-    reports = conn.execute(
+    reports_data = connection.execute(
         """
         SELECT *
         FROM reports
@@ -346,29 +323,29 @@ def reports():
         """
     ).fetchall()
 
-    conn.close()
+    connection.close()
 
     return render_template(
         "reports.html",
-        reports=reports
+        reports=reports_data
     )
 
 
-# =========================================================
-# OFFICIAL CYBER SAFETY INFORMATION
-# =========================================================
+# =================================================
+# OFFICIAL CYBER INFORMATION
+# =================================================
 
 @app.route("/cyber-help")
 def cyber_help():
 
     return render_template(
-        "cyber-help.html"
+        "cyber_help.html"
     )
 
 
-# =========================================================
-# RUN APPLICATION
-# =========================================================
+# =================================================
+# START APPLICATION
+# =================================================
 
 if __name__ == "__main__":
 

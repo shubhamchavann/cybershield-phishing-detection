@@ -2,428 +2,301 @@ import re
 from urllib.parse import urlparse
 
 
-# =========================================================
+# -------------------------------------------------
 # URL SCANNER
-# =========================================================
+# -------------------------------------------------
 
 def scan_url(url):
-
-    score = 0
-    indicators = []
-
-    url = url.strip()
-
-    # -----------------------------------------
-    # Check if URL is empty
-    # -----------------------------------------
+    """
+    Analyze a URL for common phishing indicators.
+    Returns risk score, risk level and detected indicators.
+    """
 
     if not url:
         return {
             "score": 0,
-            "risk": "UNKNOWN",
-            "indicators": ["No URL provided"]
+            "risk": "Invalid",
+            "indicators": ["No URL was entered."]
         }
 
-    # -----------------------------------------
-    # Add http if protocol is missing
-    # -----------------------------------------
+    url = url.strip()
 
-    check_url = url
+    # Add scheme if user does not provide one
+    test_url = url
 
-    if not check_url.startswith(("http://", "https://")):
-        check_url = "http://" + check_url
+    if not test_url.startswith(("http://", "https://")):
+        test_url = "http://" + test_url
 
-    # -----------------------------------------
-    # Parse URL
-    # -----------------------------------------
-
-    try:
-        parsed = urlparse(check_url)
-        hostname = parsed.hostname or ""
-    except Exception:
-        hostname = ""
-
-    # -----------------------------------------
-    # Check HTTPS
-    # -----------------------------------------
-
-    if check_url.startswith("http://"):
-
-        score += 10
-
-        indicators.append(
-            "URL does not use HTTPS"
-        )
-
-    # -----------------------------------------
-    # Check @ symbol
-    # -----------------------------------------
-
-    if "@" in check_url:
-
-        score += 20
-
-        indicators.append(
-            "URL contains @ symbol"
-        )
-
-    # -----------------------------------------
-    # Check IP address
-    # -----------------------------------------
-
-    ip_pattern = r"^(?:\d{1,3}\.){3}\d{1,3}$"
-
-    if re.match(ip_pattern, hostname):
-
-        score += 25
-
-        indicators.append(
-            "URL uses an IP address instead of a domain name"
-        )
-
-    # -----------------------------------------
-    # Suspicious words
-    # -----------------------------------------
-
-    suspicious_words = [
-
-        "login",
-        "verify",
-        "verification",
-        "account",
-        "secure",
-        "security",
-        "update",
-        "confirm",
-        "password",
-        "bank",
-        "free",
-        "gift",
-        "winner",
-        "prize",
-        "urgent",
-        "suspended"
-
-    ]
-
-    url_lower = check_url.lower()
-
-    for word in suspicious_words:
-
-        if word in url_lower:
-
-            score += 5
-
-            indicators.append(
-                f"Suspicious word detected: '{word}'"
-            )
-
-    # -----------------------------------------
-    # Check URL length
-    # -----------------------------------------
-
-    if len(check_url) > 100:
-
-        score += 10
-
-        indicators.append(
-            "URL is unusually long"
-        )
-
-    # -----------------------------------------
-    # Check too many subdomains
-    # -----------------------------------------
-
-    if hostname.count(".") >= 3:
-
-        score += 10
-
-        indicators.append(
-            "URL contains many subdomains"
-        )
-
-    # -----------------------------------------
-    # Check hyphen
-    # -----------------------------------------
-
-    if hostname.count("-") >= 2:
-
-        score += 5
-
-        indicators.append(
-            "Domain contains multiple hyphens"
-        )
-
-    # -----------------------------------------
-    # Limit score to 100
-    # -----------------------------------------
-
-    if score > 100:
-        score = 100
-
-    # -----------------------------------------
-    # Determine risk
-    # -----------------------------------------
-
-    if score >= 60:
-
-        risk = "HIGH RISK"
-
-    elif score >= 30:
-
-        risk = "MEDIUM RISK"
-
-    else:
-
-        risk = "LOW RISK"
-
-    # -----------------------------------------
-    # If nothing suspicious detected
-    # -----------------------------------------
-
-    if not indicators:
-
-        indicators.append(
-            "No major phishing indicators detected"
-        )
-
-    # -----------------------------------------
-    # Return result
-    # -----------------------------------------
-
-    return {
-
-        "score": score,
-
-        "risk": risk,
-
-        "indicators": indicators,
-
-        "url": url
-
-    }
-
-
-# =========================================================
-# MESSAGE SCANNER
-# =========================================================
-
-def scan_message(message):
+    parsed = urlparse(test_url)
 
     score = 0
     indicators = []
 
-    message = message.strip()
+    # ---------------------------------------------
+    # 1. Check HTTPS
+    # ---------------------------------------------
 
-    # -----------------------------------------
-    # Empty message
-    # -----------------------------------------
+    if parsed.scheme != "https":
+        score += 15
+        indicators.append("The URL does not use HTTPS.")
 
-    if not message:
+    # ---------------------------------------------
+    # 2. Check @ symbol
+    # ---------------------------------------------
 
-        return {
-
-            "score": 0,
-
-            "risk": "UNKNOWN",
-
-            "indicators": ["No message provided"]
-
-        }
-
-    text = message.lower()
-
-    # -----------------------------------------
-    # Suspicious phishing keywords
-    # -----------------------------------------
-
-    suspicious_words = {
-
-        "otp": 20,
-
-        "password": 20,
-
-        "cvv": 20,
-
-        "pin": 15,
-
-        "urgent": 10,
-
-        "immediately": 10,
-
-        "verify": 10,
-
-        "account blocked": 15,
-
-        "account suspended": 15,
-
-        "click here": 10,
-
-        "login": 10,
-
-        "bank": 10,
-
-        "prize": 10,
-
-        "winner": 10,
-
-        "refund": 10,
-
-        "lottery": 15,
-
-        "limited time": 10
-
-    }
-
-    # -----------------------------------------
-    # Check keywords
-    # -----------------------------------------
-
-    for word, points in suspicious_words.items():
-
-        if word in text:
-
-            score += points
-
-            indicators.append(
-
-                f"Suspicious phrase detected: '{word}'"
-
-            )
-
-    # -----------------------------------------
-    # Check URL inside message
-    # -----------------------------------------
-
-    url_pattern = r"https?://[^\s]+"
-
-    urls = re.findall(
-        url_pattern,
-        message
-    )
-
-    if urls:
-
-        score += 10
-
+    if "@" in url:
+        score += 20
         indicators.append(
-            "Message contains a clickable URL"
+            "The URL contains @, which can hide the actual destination."
         )
 
-    # -----------------------------------------
-    # Check urgency
-    # -----------------------------------------
+    # ---------------------------------------------
+    # 3. Check IP address
+    # ---------------------------------------------
 
-    urgency_words = [
+    hostname = parsed.hostname or ""
 
-        "act now",
+    ip_pattern = r"^\d{1,3}(\.\d{1,3}){3}$"
 
+    if re.match(ip_pattern, hostname):
+        score += 25
+        indicators.append(
+            "The URL uses an IP address instead of a normal domain."
+        )
+
+    # ---------------------------------------------
+    # 4. Check suspicious keywords
+    # ---------------------------------------------
+
+    suspicious_words = [
+        "login",
+        "verify",
+        "verification",
+        "secure",
+        "account",
+        "update",
+        "password",
+        "bank",
+        "confirm",
+        "wallet",
+        "bonus",
+        "free",
+        "reward",
         "urgent",
-
-        "immediately",
-
-        "within 24 hours",
-
-        "account will be blocked",
-
-        "last chance"
-
+        "claim"
     ]
 
-    for phrase in urgency_words:
+    found_words = []
 
-        if phrase in text:
+    lower_url = url.lower()
 
-            score += 10
+    for word in suspicious_words:
+        if word in lower_url:
+            found_words.append(word)
 
-            indicators.append(
+    if found_words:
+        score += min(len(found_words) * 5, 25)
 
-                f"Urgency detected: '{phrase}'"
+        indicators.append(
+            "Suspicious keywords found: "
+            + ", ".join(found_words)
+        )
 
-            )
+    # ---------------------------------------------
+    # 5. Check URL length
+    # ---------------------------------------------
 
-    # -----------------------------------------
-    # Check request for sensitive information
-    # -----------------------------------------
+    if len(url) > 100:
+        score += 10
+        indicators.append("The URL is unusually long.")
 
-    sensitive_phrases = [
+    # ---------------------------------------------
+    # 6. Check many subdomains
+    # ---------------------------------------------
 
-        "share your otp",
+    if hostname.count(".") >= 3:
+        score += 15
+        indicators.append(
+            "The domain contains many subdomains."
+        )
 
-        "send otp",
+    # ---------------------------------------------
+    # 7. Check hyphens
+    # ---------------------------------------------
 
-        "share password",
+    if hostname.count("-") >= 2:
+        score += 10
+        indicators.append(
+            "The domain contains multiple hyphens."
+        )
 
-        "send password",
-
-        "enter your cvv",
-
-        "send your pin",
-
-        "verify your account"
-
-    ]
-
-    for phrase in sensitive_phrases:
-
-        if phrase in text:
-
-            score += 15
-
-            indicators.append(
-
-                f"Sensitive information request: '{phrase}'"
-
-            )
-
-    # -----------------------------------------
+    # ---------------------------------------------
     # Limit score
-    # -----------------------------------------
+    # ---------------------------------------------
 
-    if score > 100:
+    score = min(score, 100)
 
-        score = 100
-
-    # -----------------------------------------
-    # Determine risk
-    # -----------------------------------------
+    # ---------------------------------------------
+    # Risk level
+    # ---------------------------------------------
 
     if score >= 60:
-
-        risk = "HIGH RISK"
+        risk = "High Risk"
 
     elif score >= 30:
-
-        risk = "MEDIUM RISK"
+        risk = "Suspicious"
 
     else:
-
-        risk = "LOW RISK"
-
-    # -----------------------------------------
-    # No indicators
-    # -----------------------------------------
+        risk = "Low Risk"
 
     if not indicators:
-
         indicators.append(
-
-            "No major phishing indicators detected"
-
+            "No obvious phishing indicators were detected."
         )
 
-    # -----------------------------------------
-    # Return result
-    # -----------------------------------------
+    return {
+        "score": score,
+        "risk": risk,
+        "indicators": indicators
+    }
+
+
+# -------------------------------------------------
+# MESSAGE SCANNER
+# -------------------------------------------------
+
+def scan_message(message):
+    """
+    Analyze a text message for common phishing indicators.
+    """
+
+    if not message:
+        return {
+            "score": 0,
+            "risk": "Invalid",
+            "indicators": ["No message was entered."]
+        }
+
+    text = message.strip().lower()
+
+    score = 0
+    indicators = []
+
+    # ---------------------------------------------
+    # Suspicious keywords
+    # ---------------------------------------------
+
+    keywords = [
+        "otp",
+        "password",
+        "verify",
+        "verification",
+        "click here",
+        "urgent",
+        "account blocked",
+        "account suspended",
+        "bank",
+        "refund",
+        "prize",
+        "winner",
+        "reward",
+        "lottery",
+        "kyc",
+        "upi",
+        "cvv",
+        "pin",
+        "claim now"
+    ]
+
+    found_keywords = []
+
+    for word in keywords:
+        if word in text:
+            found_keywords.append(word)
+
+    if found_keywords:
+        score += min(len(found_keywords) * 7, 45)
+
+        indicators.append(
+            "Suspicious words found: "
+            + ", ".join(found_keywords)
+        )
+
+    # ---------------------------------------------
+    # Check URLs
+    # ---------------------------------------------
+
+    if "http://" in text or "https://" in text:
+        score += 20
+        indicators.append(
+            "The message contains a website link."
+        )
+
+    # ---------------------------------------------
+    # Urgency
+    # ---------------------------------------------
+
+    urgency_words = [
+        "urgent",
+        "immediately",
+        "act now",
+        "within 24 hours",
+        "last chance",
+        "expires today"
+    ]
+
+    if any(word in text for word in urgency_words):
+        score += 15
+        indicators.append(
+            "The message creates a sense of urgency."
+        )
+
+    # ---------------------------------------------
+    # Financial information
+    # ---------------------------------------------
+
+    financial_words = [
+        "cvv",
+        "upi pin",
+        "pin",
+        "bank account",
+        "card number",
+        "password",
+        "otp"
+    ]
+
+    if any(word in text for word in financial_words):
+        score += 20
+        indicators.append(
+            "The message asks for sensitive financial or login information."
+        )
+
+    # ---------------------------------------------
+    # Limit score
+    # ---------------------------------------------
+
+    score = min(score, 100)
+
+    # ---------------------------------------------
+    # Risk level
+    # ---------------------------------------------
+
+    if score >= 60:
+        risk = "High Risk"
+
+    elif score >= 30:
+        risk = "Suspicious"
+
+    else:
+        risk = "Low Risk"
+
+    if not indicators:
+        indicators.append(
+            "No obvious phishing indicators were detected."
+        )
 
     return {
-
         "score": score,
-
         "risk": risk,
-
-        "indicators": indicators,
-
-        "message": message
-
+        "indicators": indicators
     }

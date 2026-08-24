@@ -9,7 +9,198 @@
           content="width=device-width, initial-scale=1.0">
 
     <title>Cyber Shield</title>
+{% extends "base.html" %}
 
+{% block content %}
+
+<section class="hero">
+
+    <p class="tag">
+        🛡️ CYBERSECURITY AWARENESS
+    </p>
+
+    <h1>
+        Protect Yourself From
+        Phishing & Online Fraud
+    </h1>
+
+    <p class="subtitle">
+        Cyber Shield helps you identify suspicious URLs,
+        phishing messages and common online fraud techniques.
+    </p>
+
+    <div class="hero-buttons">
+
+        <a class="btn"
+           href="{{ url_for('url_checker') }}">
+            🔍 Scan URL
+        </a>
+
+        <a class="btn secondary"
+           href="{{ url_for('message_checker') }}">
+            💬 Check Message
+        </a>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <p class="tag">
+        WHAT WE DO
+    </p>
+
+    <h2>
+        What Cyber Shield Can Do
+    </h2>
+
+    <p>
+        Simple tools to help you stay safe online.
+    </p>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="icon">
+                🔗
+            </div>
+
+            <h3>
+                URL Scanner
+            </h3>
+
+            <p>
+                Check URLs for common phishing indicators
+                and suspicious patterns.
+            </p>
+
+            <a href="{{ url_for('url_checker') }}">
+                Try Scanner →
+            </a>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">
+                💬
+            </div>
+
+            <h3>
+                Message Scanner
+            </h3>
+
+            <p>
+                Analyze suspicious messages for phishing
+                and fraud indicators.
+            </p>
+
+            <a href="{{ url_for('message_checker') }}">
+                Check Message →
+            </a>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">
+                🧠
+            </div>
+
+            <h3>
+                Awareness Quiz
+            </h3>
+
+            <p>
+                Test your knowledge of phishing,
+                scams and cybersecurity safety.
+            </p>
+
+            <a href="{{ url_for('quiz') }}">
+                Take Quiz →
+            </a>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">
+                🚨
+            </div>
+
+            <h3>
+                Report Scam
+            </h3>
+
+            <p>
+                Report suspicious websites, messages
+                and scams to help other users.
+            </p>
+
+            <a href="{{ url_for('report') }}">
+                Report Scam →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="safety">
+
+    <h2>
+        Remember These Safety Rules
+    </h2>
+
+    <div class="safety-grid">
+
+        <div>
+            🔐
+            <h3>Protect Your OTP</h3>
+            <p>
+                Never share your OTP with anyone.
+            </p>
+        </div>
+
+        <div>
+            🔗
+            <h3>Check Links</h3>
+            <p>
+                Verify the website address before clicking.
+            </p>
+        </div>
+
+        <div>
+            💳
+            <h3>Protect Banking Details</h3>
+            <p>
+                Never share your PIN, CVV or password.
+            </p>
+        </div>
+
+        <div>
+            ⚠️
+            <h3>Beware of Urgency</h3>
+            <p>
+                Be careful with messages demanding
+                immediate action.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
 

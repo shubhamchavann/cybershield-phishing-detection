@@ -1,146 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block content %}
 
-    <meta charset="UTF-8">
+<section class="scanner-page">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <p class="tag">
+        🛡️ CYBERSECURITY AWARENESS
+    </p>
 
-    <title>Awareness - Cyber Shield</title>
+    <h1>
+        Stay Safe From Phishing
+    </h1>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
-</head>
-
-<body>
-
-<nav class="navbar">
-
-    <div class="logo">
-        🛡️ Cyber Shield
-    </div>
-
-    <div class="nav-links">
-
-        <a href="/">Home</a>
-        <a href="/url-checker">URL Scanner</a>
-        <a href="/message-checker">Message Scanner</a>
-        <a href="/awareness">Awareness</a>
-        <a href="/quiz">Quiz</a>
-
-    </div>
-
-</nav>
+    <p>
+        Learn how scammers try to steal your personal
+        and financial information.
+    </p>
 
 
-<main class="container">
+    <div class="awareness-list">
 
-    <div class="page-header">
+        <div class="awareness-item">
 
-        <div class="tag">
-            🛡️ CYBERSECURITY AWARENESS
-        </div>
-
-        <h1>
-            Stay Safe From Phishing
-        </h1>
-
-        <p>
-            Learn how scammers try to steal
-            your personal and financial information.
-        </p>
-
-    </div>
-
-
-    <div class="awareness-grid">
-
-
-        <div class="awareness-card">
-
-            <div class="icon">
-                🎣
-            </div>
+            🎣
 
             <h2>
                 What is Phishing?
             </h2>
 
             <p>
-                Phishing is a cyber attack where
-                criminals pretend to be trusted
-                organizations to steal sensitive
-                information.
+                Phishing is a cyber attack where criminals
+                pretend to be trusted organizations to steal
+                sensitive information.
             </p>
 
         </div>
 
 
-        <div class="awareness-card">
+        <div class="awareness-item">
 
-            <div class="icon">
-                🔗
-            </div>
+            🔗
 
             <h2>
                 Check Links
             </h2>
 
             <p>
-                Check the domain carefully before
-                clicking a link or entering your
-                login information.
+                Check the domain carefully before clicking
+                a link or entering your login information.
             </p>
 
         </div>
 
 
-        <div class="awareness-card">
+        <div class="awareness-item">
 
-            <div class="icon">
-                🔐
-            </div>
+            🔐
 
             <h2>
                 Protect OTP
             </h2>
 
             <p>
-                Banks and legitimate services should
-                never require you to share your OTP,
-                CVV or UPI PIN.
+                Banks and legitimate services should never
+                require you to share your OTP, CVV or UPI PIN.
             </p>
 
         </div>
 
 
-        <div class="awareness-card">
+        <div class="awareness-item">
 
-            <div class="icon">
-                ⚠️
-            </div>
+            ⚠️
 
             <h2>
                 Beware of Urgency
             </h2>
 
             <p>
-                Scammers often create urgency by
-                saying your account will be blocked
-                or an offer will expire.
+                Scammers often create urgency by saying
+                your account will be blocked or an offer
+                will expire.
             </p>
 
         </div>
 
 
-        <div class="awareness-card">
+        <div class="awareness-item">
 
-            <div class="icon">
-                💰
-            </div>
+            💰
 
             <h2>
                 Job & Prize Scams
@@ -154,36 +102,8 @@
 
         </div>
 
-
-        <div class="awareness-card">
-
-            <div class="icon">
-                🏦
-            </div>
-
-            <h2>
-                Banking Safety
-            </h2>
-
-            <p>
-                Never share your password, ATM PIN,
-                CVV, OTP or UPI PIN with anyone.
-            </p>
-
-        </div>
-
-
     </div>
 
-</main>
+</section>
 
-
-<footer class="footer">
-
-    Cyber Shield — Cybersecurity Awareness
-
-</footer>
-
-</body>
-
-</html>
+{% endblock %}

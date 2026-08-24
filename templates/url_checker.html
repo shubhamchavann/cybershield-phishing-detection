@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="scanner-page">
+
+    <p class="tag">
+        🔗 URL SECURITY SCANNER
+    </p>
+
+    <h1>
+        Check a Suspicious URL
+    </h1>
+
+    <p>
+        Enter a website URL to analyze common phishing indicators.
+    </p>
+
+
+    <form method="POST"
+          class="scanner-form">
+
+        <input
+            type="text"
+            name="url"
+            placeholder="Example: https://example.com"
+            value="{{ url }}"
+            required
+        >
+
+        <button type="submit"
+                class="btn">
+            🔍 Scan URL
+        </button>
+
+        <button type="button"
+                class="btn secondary"
+                onclick="clearForm()">
+            Clear
+        </button>
+
+    </form>
+
+
+    {% if result %}
+
+    <div class="result-box">
+
+        <h2>
+            Scan Result
+        </h2>
+
+        <div class="risk
+            {% if result.risk == 'High Risk' %}
+                danger
+            {% elif result.risk == 'Suspicious' %}
+                warning
+            {% else %}
+                safe
+            {% endif %}
+        ">
+
+            {{ result.risk }}
+
+        </div>
+
+        <h3>
+            Risk Score: {{ result.score }}/100
+        </h3>
+
+
+        <h3>
+            Detected Indicators
+        </h3>
+
+        <ul>
+
+            {% for item in result.indicators %}
+
+            <li>
+                {{ item }}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}
