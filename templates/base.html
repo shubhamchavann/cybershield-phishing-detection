@@ -2,87 +2,151 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Cyber Shield</title>
-
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield | Advanced Phishing Detection & Threat Intelligence</title>
+    
+    <!-- Meta tags for SEO & Security -->
+    <meta name="description" content="CyberShield is an intelligent cybersecurity platform designed to detect phishing URLs, malicious SMS fraud, and educate users on zero-day cyber threats.">
+    
+    <!-- Favicon & Icons -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Cyber CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
-<header class="navbar">
+    <!-- 1. STARTING CYBER BOOT INTRO SCREEN -->
+    <div id="boot-screen">
+        <div class="boot-container">
+            <div class="boot-header">
+                <div class="boot-logo">
+                    <span class="boot-icon-spin">🛡️</span>
+                    <span>CYBERSHIELD MATRIX</span>
+                </div>
+                <div class="boot-version">v3.4.0 DEFENSE PROTOCOL</div>
+            </div>
 
-    <a href="{{ url_for('home') }}"
-       class="logo">
-        🛡️ Cyber Shield
-    </a>
+            <div class="boot-log-terminal" id="boot-log-terminal">
+                <!-- Lines injected dynamically by JS -->
+            </div>
 
-    <nav>
+            <div class="boot-progress-wrap">
+                <div class="boot-progress-bar">
+                    <div class="boot-progress-fill" id="boot-progress-fill"></div>
+                </div>
+                <div class="boot-progress-text">
+                    <span>SECURITY SUBSYSTEMS ARMED</span>
+                    <span id="boot-progress-percent">0%</span>
+                </div>
+            </div>
 
-        <a href="{{ url_for('home') }}">
-            Home
-        </a>
+            <button type="button" class="skip-boot-btn" id="skip-boot-btn">⚡ Skip Sequence</button>
+        </div>
+    </div>
 
-        <a href="{{ url_for('url_checker') }}">
-            URL Scanner
-        </a>
+    <!-- 2. INTERACTIVE PARTICLES & CYBER GRID OVERLAY -->
+    <canvas id="cyber-canvas"></canvas>
+    <div class="cyber-grid-overlay"></div>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
 
-        <a href="{{ url_for('message_checker') }}">
-            Message Scanner
-        </a>
+    <!-- 3. TOP NAVIGATION HEADER -->
+    <header class="site-header">
+        <nav class="navbar">
+            <a href="{{ url_for('home') }}" class="brand-logo">
+                <div class="brand-shield-icon">🛡️</div>
+                <span class="brand-title">CyberShield</span>
+            </a>
 
-        <a href="{{ url_for('awareness') }}">
-            Awareness
-        </a>
+            <ul class="nav-menu" id="main-nav-menu">
+                <li><a href="{{ url_for('home') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">🏠 Home</a></li>
+                <li><a href="{{ url_for('url_checker') }}" class="nav-link {% if request.path == '/url-checker' %}active{% endif %}">🔗 URL Scanner</a></li>
+                <li><a href="{{ url_for('message_checker') }}" class="nav-link {% if request.path == '/message-checker' %}active{% endif %}">📩 SMS/Chat Scanner</a></li>
+                <li><a href="{{ url_for('awareness') }}" class="nav-link {% if request.path == '/awareness' %}active{% endif %}">🧠 Awareness Hub</a></li>
+                <li><a href="{{ url_for('quiz') }}" class="nav-link {% if request.path == '/quiz' %}active{% endif %}">❓ Cyber Quiz</a></li>
+                <li><a href="{{ url_for('reports') }}" class="nav-link {% if request.path == '/reports' %}active{% endif %}">📋 Scam Feed</a></li>
+                <li><a href="{{ url_for('cyber_help') }}" class="nav-link {% if request.path == '/cyber-help' %}active{% endif %}">🆘 Emergency 1930</a></li>
+                <li><a href="{{ url_for('report') }}" class="nav-link nav-cta">🚨 Report Scam</a></li>
+            </ul>
 
-        <a href="{{ url_for('quiz') }}">
-            Quiz
-        </a>
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div class="nav-status-badge">
+                    <div class="beacon-dot"></div>
+                    <span>SHIELDS ACTIVE</span>
+                </div>
+                <button type="button" class="mobile-toggle" id="mobile-menu-toggle" aria-label="Toggle Navigation">☰</button>
+            </div>
+        </nav>
+    </header>
 
-        <a href="{{ url_for('report') }}">
-            Report Scam
-        </a>
+    <!-- 4. PAGE CONTENT -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
-        <a href="{{ url_for('reports') }}">
-            Reports
-        </a>
+    <!-- 5. CYBER FOOTER -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="{{ url_for('home') }}" class="brand-logo" style="margin-bottom: 15px;">
+                        <div class="brand-shield-icon">🛡️</div>
+                        <span class="brand-title">CyberShield</span>
+                    </a>
+                    <p>
+                        Advanced heuristic threat detection engine safeguarding citizens against deceptive phishing URLs, fraudulent banking SMS, and digital financial scams.
+                    </p>
+                </div>
 
-        <a href="{{ url_for('cyber_help') }}">
-            Cyber Help
-        </a>
+                <div class="footer-col">
+                    <h4>Core Scanners</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('url_checker') }}">URL Phishing Detector</a></li>
+                        <li><a href="{{ url_for('message_checker') }}">SMS & Message Analyzer</a></li>
+                        <li><a href="{{ url_for('quiz') }}">Interactive Cyber Quiz</a></li>
+                        <li><a href="{{ url_for('awareness') }}">Phishing Attack Anatomy</a></li>
+                    </ul>
+                </div>
 
-    </nav>
+                <div class="footer-col">
+                    <h4>Community & Defense</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('reports') }}">Live Community Scam Feed</a></li>
+                        <li><a href="{{ url_for('report') }}">Submit a New Scam</a></li>
+                        <li><a href="{{ url_for('cyber_help') }}">National Cyber Crime 1930</a></li>
+                        <li><a href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer">cybercrime.gov.in ↗</a></li>
+                    </ul>
+                </div>
 
-</header>
+                <div class="footer-col">
+                    <h4>System Diagnostics</h4>
+                    <ul class="footer-links">
+                        <li><span style="color: var(--success);">● Heuristic Engine: Online</span></li>
+                        <li><span style="color: var(--primary);">● Zero-Day Signatures: v3.4</span></li>
+                        <li><span style="color: var(--text-muted);">● Response Latency: &lt; 0.2s</span></li>
+                        <li><button type="button" onclick="sessionStorage.removeItem('cybershield_booted'); location.reload();" class="sample-pill" style="margin-top: 10px;">⚡ Replay Intro Boot</button></li>
+                    </ul>
+                </div>
+            </div>
 
+            <div class="footer-bottom">
+                <div>🛡️ CyberShield Threat Defense &bull; Open Cyber Literacy Initiative</div>
+                <div>Created with Security First Architecture &bull; 2026</div>
+            </div>
+        </div>
+    </footer>
 
-<main>
-
-    {% block content %}
-    {% endblock %}
-
-</main>
-
-
-<footer>
-
-    <p>
-        🛡️ Cyber Shield |
-        Cybersecurity Awareness Project
-    </p>
-
-</footer>
-
-
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-
+    <!-- Frontend Core Engine -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 
 </html>

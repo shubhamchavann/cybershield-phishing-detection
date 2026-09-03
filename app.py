@@ -1,18 +1,18 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import sqlite3
-from datetime import datetime
+import os
 
 from detector import scan_url, scan_message
 
 
 app = Flask(__name__)
 
-DATABASE = "cyber_shield.db"
+DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db")
 
 
-# =================================================
-# DATABASE
-# =================================================
+# --------------------------------------------------
+# DATABASE CONNECTION & INITIALIZATION
+# --------------------------------------------------
 
 def get_db():
     connection = sqlite3.connect(DATABASE)
@@ -21,46 +21,94 @@ def get_db():
 
 
 def init_db():
-
     connection = get_db()
 
     connection.execute("""
         CREATE TABLE IF NOT EXISTS reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             category TEXT NOT NULL,
-            target TEXT NOT NULL,
+            title TEXT NOT NULL,
             description TEXT NOT NULL,
-            created_at TEXT NOT NULL
+            contact TEXT,
+            severity TEXT DEFAULT 'High',
+            upvotes INTEGER DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    # Safe Schema Migrations for existing database.db
+    cursor = connection.execute("PRAGMA table_info(reports)")
+    columns = [row["name"] for row in cursor.fetchall()]
+    
+    if "severity" not in columns:
+        connection.execute("ALTER TABLE reports ADD COLUMN severity TEXT DEFAULT 'High'")
+    if "upvotes" not in columns:
+        connection.execute("ALTER TABLE reports ADD COLUMN upvotes INTEGER DEFAULT 0")
+
+    # Seed sample reports if table is empty so community hub is rich
+    cursor = connection.execute("SELECT COUNT(*) as count FROM reports")
+    row = cursor.fetchone()
+    if row and row["count"] == 0:
+        sample_reports = [
+            (
+                "Banking Fraud",
+                "Fake SBI Reward Points APK Message",
+                "Received an SMS stating 'Dear Customer, your SBI 9,980 reward points are expiring today. Redeem cash in your account by installing SBI-Rewards.apk from bit.ly/sbi-claim-98'. The app requests SMS permissions to steal OTPs.",
+                "http://sbi-reward-points.xyz/login",
+                "Critical",
+                28
+            ),
+            (
+                "Electricity Scam",
+                "Urgent Power Cut Notice Threat",
+                "SMS claiming 'Dear consumer, your electricity power will be disconnected tonight at 9:30 PM because previous month bill was not updated. Immediately contact Electricity Officer at 98765xxxxx'. They asked to install AnyDesk app.",
+                "+91 98765-43210",
+                "High",
+                42
+            ),
+            (
+                "Job Scam",
+                "Part-Time YouTube Video Liking Job on Telegram",
+                "WhatsApp message from unknown international number offering Rs. 3000/day for liking YouTube videos. After paying initial Rs. 150 reward, they asked to invest Rs. 10,000 into a fake crypto task platform.",
+                "@FastTaskEarn_Global (Telegram)",
+                "High",
+                19
+            ),
+            (
+                "UPI Fraud",
+                "Fake Olx QR Code 'Payment' Trap",
+                "Buyer on OLX agreed to buy furniture immediately and sent a QR code saying 'Scan this QR code to receive Rs. 15,000 in your bank account'. Scanning it actually creates a debit payment request!",
+                "fraud-merchant@upi",
+                "High",
+                35
+            )
+        ]
+
+        connection.executemany("""
+            INSERT INTO reports (category, title, description, contact, severity, upvotes)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, sample_reports)
 
     connection.commit()
     connection.close()
 
 
-# =================================================
-# HOME
-# =================================================
+# --------------------------------------------------
+# WEB ROUTES
+# --------------------------------------------------
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
-# =================================================
-# URL SCANNER
-# =================================================
-
 @app.route("/url-checker", methods=["GET", "POST"])
 def url_checker():
-
     result = None
     url = ""
 
     if request.method == "POST":
-
         url = request.form.get("url", "").strip()
-
         if url:
             result = scan_url(url)
 
@@ -71,23 +119,13 @@ def url_checker():
     )
 
 
-# =================================================
-# MESSAGE SCANNER
-# =================================================
-
 @app.route("/message-checker", methods=["GET", "POST"])
 def message_checker():
-
     result = None
     message = ""
 
     if request.method == "POST":
-
-        message = request.form.get(
-            "message",
-            ""
-        ).strip()
-
+        message = request.form.get("message", "").strip()
         if message:
             result = scan_message(message)
 
@@ -98,206 +136,63 @@ def message_checker():
     )
 
 
-# =================================================
-# AWARENESS
-# =================================================
-
 @app.route("/awareness")
 def awareness():
+    return render_template("awareness.html")
 
-    return render_template(
-        "awareness.html"
-    )
-
-
-# =================================================
-# QUIZ
-# =================================================
 
 @app.route("/quiz", methods=["GET", "POST"])
 def quiz():
-
-    questions = [
-        {
-            "question": "What is phishing?",
-            "options": [
-                "A computer hardware problem",
-                "An attempt to trick users into revealing sensitive information",
-                "A type of antivirus"
-            ],
-            "answer": 1
-        },
-
-        {
-            "question": "Someone claiming to be from your bank asks for your OTP. What should you do?",
-            "options": [
-                "Give them the OTP",
-                "Refuse and verify through the bank's official contact channel",
-                "Send your password instead"
-            ],
-            "answer": 1
-        },
-
-        {
-            "question": "Which is a common phishing warning sign?",
-            "options": [
-                "An unexpected urgent request",
-                "A normal greeting from a friend",
-                "A website you regularly use"
-            ],
-            "answer": 0
-        },
-
-        {
-            "question": "Should you share your UPI PIN with someone?",
-            "options": [
-                "Yes",
-                "Only with bank employees",
-                "No"
-            ],
-            "answer": 2
-        },
-
-        {
-            "question": "What should you check before clicking a suspicious link?",
-            "options": [
-                "The domain name",
-                "The screen brightness",
-                "The phone wallpaper"
-            ],
-            "answer": 0
-        },
-
-        {
-            "question": "What does HTTPS generally indicate?",
-            "options": [
-                "The connection uses encryption",
-                "The website is always legitimate",
-                "The website cannot be hacked"
-            ],
-            "answer": 0
-        },
-
-        {
-            "question": "What should you do if you receive a suspicious banking message?",
-            "options": [
-                "Click the link immediately",
-                "Verify through the bank's official website or app",
-                "Forward it to everyone"
-            ],
-            "answer": 1
-        },
-
-        {
-            "question": "Which information should you never share through an unsolicited message?",
-            "options": [
-                "OTP and PIN",
-                "Weather information",
-                "Public news"
-            ],
-            "answer": 0
-        },
-
-        {
-            "question": "What is smishing?",
-            "options": [
-                "Phishing through SMS or text messages",
-                "A type of computer virus",
-                "A secure login method"
-            ],
-            "answer": 0
-        },
-
-        {
-            "question": "What is the safest response to an unexpected prize message?",
-            "options": [
-                "Pay the processing fee",
-                "Share your bank details",
-                "Verify independently and avoid suspicious links"
-            ],
-            "answer": 2
-        }
-    ]
-
     score = None
+    submitted = False
+
+    correct_answers = {
+        "q1": "b",
+        "q2": "b",
+        "q3": "a",
+        "q4": "c",
+        "q5": "b",
+        "q6": "a",
+        "q7": "c",
+        "q8": "b",
+        "q9": "a",
+        "q10": "c"
+    }
 
     if request.method == "POST":
-
         score = 0
-
-        for index, question in enumerate(questions):
-
-            answer = request.form.get(
-                f"question_{index}"
-            )
-
-            if answer is not None:
-
-                try:
-                    answer = int(answer)
-
-                    if answer == question["answer"]:
-                        score += 1
-
-                except ValueError:
-                    pass
+        for question, answer in correct_answers.items():
+            user_answer = request.form.get(question)
+            if user_answer == answer:
+                score += 1
+        submitted = True
 
     return render_template(
         "quiz.html",
-        questions=questions,
-        score=score
+        score=score,
+        submitted=submitted
     )
 
 
-# =================================================
-# REPORT SCAM
-# =================================================
-
 @app.route("/report", methods=["GET", "POST"])
 def report():
-
     success = False
 
     if request.method == "POST":
+        category = request.form.get("category", "").strip()
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        contact = request.form.get("contact", "").strip()
+        severity = request.form.get("severity", "High").strip()
 
-        category = request.form.get(
-            "category",
-            ""
-        ).strip()
-
-        target = request.form.get(
-            "target",
-            ""
-        ).strip()
-
-        description = request.form.get(
-            "description",
-            ""
-        ).strip()
-
-        if category and target and description:
-
+        if category and title and description:
             connection = get_db()
-
-            connection.execute(
-                """
-                INSERT INTO reports
-                (category, target, description, created_at)
-                VALUES (?, ?, ?, ?)
-                """,
-                (
-                    category,
-                    target,
-                    description,
-                    datetime.now().strftime(
-                        "%Y-%m-%d %H:%M:%S"
-                    )
-                )
-            )
-
+            connection.execute("""
+                INSERT INTO reports (category, title, description, contact, severity)
+                VALUES (?, ?, ?, ?, ?)
+            """, (category, title, description, contact, severity))
             connection.commit()
             connection.close()
-
             success = True
 
     return render_template(
@@ -306,23 +201,14 @@ def report():
     )
 
 
-# =================================================
-# VIEW COMMUNITY REPORTS
-# =================================================
-
 @app.route("/reports")
 def reports():
-
     connection = get_db()
-
-    reports_data = connection.execute(
-        """
+    reports_data = connection.execute("""
         SELECT *
         FROM reports
         ORDER BY id DESC
-        """
-    ).fetchall()
-
+    """).fetchall()
     connection.close()
 
     return render_template(
@@ -331,26 +217,60 @@ def reports():
     )
 
 
-# =================================================
-# OFFICIAL CYBER INFORMATION
-# =================================================
-
 @app.route("/cyber-help")
 def cyber_help():
-
-    return render_template(
-        "cyber_help.html"
-    )
+    return render_template("cyber_help.html")
 
 
-# =================================================
+@app.route("/result")
+def result():
+    return render_template("result.html")
+
+
+# --------------------------------------------------
+# JSON API ENDPOINTS (FOR REAL-TIME INTERACTIVE HUD)
+# --------------------------------------------------
+
+@app.route("/api/scan-url", methods=["POST"])
+def api_scan_url():
+    data = request.get_json(silent=True) or request.form
+    url = data.get("url", "").strip() if data else ""
+    if not url:
+        return jsonify({"error": "No URL provided"}), 400
+    result = scan_url(url)
+    return jsonify(result)
+
+
+@app.route("/api/scan-message", methods=["POST"])
+def api_scan_message():
+    data = request.get_json(silent=True) or request.form
+    message = data.get("message", "").strip() if data else ""
+    if not message:
+        return jsonify({"error": "No message text provided"}), 400
+    result = scan_message(message)
+    return jsonify(result)
+
+
+@app.route("/api/upvote-report/<int:report_id>", methods=["POST"])
+def api_upvote_report(report_id):
+    try:
+        connection = get_db()
+        connection.execute("UPDATE reports SET upvotes = upvotes + 1 WHERE id = ?", (report_id,))
+        connection.commit()
+        row = connection.execute("SELECT upvotes FROM reports WHERE id = ?", (report_id,)).fetchone()
+        upvotes = row["upvotes"] if row else 0
+        connection.close()
+        return jsonify({"success": True, "upvotes": upvotes})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+# --------------------------------------------------
 # START APPLICATION
-# =================================================
+# --------------------------------------------------
 
 if __name__ == "__main__":
-
     init_db()
-
     app.run(
         debug=True,
         host="127.0.0.1",

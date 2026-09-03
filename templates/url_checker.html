@@ -2,93 +2,132 @@
 
 {% block content %}
 
-<section class="scanner-page">
-
-    <p class="tag">
-        🔗 URL SECURITY SCANNER
-    </p>
-
-    <h1>
-        Check a Suspicious URL
-    </h1>
-
-    <p>
-        Enter a website URL to analyze common phishing indicators.
-    </p>
-
-
-    <form method="POST"
-          class="scanner-form">
-
-        <input
-            type="text"
-            name="url"
-            placeholder="Example: https://example.com"
-            value="{{ url }}"
-            required
-        >
-
-        <button type="submit"
-                class="btn">
-            🔍 Scan URL
-        </button>
-
-        <button type="button"
-                class="btn secondary"
-                onclick="clearForm()">
-            Clear
-        </button>
-
-    </form>
-
-
-    {% if result %}
-
-    <div class="result-box">
-
-        <h2>
-            Scan Result
-        </h2>
-
-        <div class="risk
-            {% if result.risk == 'High Risk' %}
-                danger
-            {% elif result.risk == 'Suspicious' %}
-                warning
-            {% else %}
-                safe
-            {% endif %}
-        ">
-
-            {{ result.risk }}
-
+<div class="scanner-page-container">
+    <div class="scanner-hud-box">
+        
+        <div class="scanner-header-center">
+            <div class="section-tag">
+                <span>🔗</span> URL INTELLIGENCE ENGINE
+            </div>
+            <h1 class="section-title">
+                Analyze Suspicious Web Link
+            </h1>
+            <p class="section-subtitle" style="margin: 0 auto;">
+                Deep scan web addresses for brand impersonation, zero-day phishing patterns, suspicious TLDs, and masked redirects.
+            </p>
         </div>
 
-        <h3>
-            Risk Score: {{ result.score }}/100
-        </h3>
+        <!-- Scanner Form -->
+        <form method="POST" class="ajax-url-scanner">
+            <div class="scanner-input-group">
+                <input
+                    type="text"
+                    id="url-input-field"
+                    name="url"
+                    class="scanner-input"
+                    placeholder="Enter URL e.g. http://sbi-reward-points.xyz/login"
+                    value="{{ url or '' }}"
+                    required
+                    autocomplete="off"
+                >
+                <button type="submit" class="btn">
+                    <span>🔍</span> Deep Scan URL
+                </button>
+                <button type="button" class="btn secondary" onclick="clearForm()">
+                    Clear
+                </button>
+            </div>
 
+            <!-- Quick Presets -->
+            <div class="sample-pills" style="margin-top: 20px;">
+                <span class="sample-label">Quick Test Presets:</span>
+                <button type="button" class="sample-pill" data-target="url-input-field" data-sample="http://sbi-card-reward-claim.xyz/verify-account.php" data-autosubmit="true">
+                    ⚠️ Fake SBI Phishing URL
+                </button>
+                <button type="button" class="sample-pill" data-target="url-input-field" data-sample="http://192.168.1.1:8080/secure-update/login.html" data-autosubmit="true">
+                    ⚠️ IP Address Hostname
+                </button>
+                <button type="button" class="sample-pill" data-target="url-input-field" data-sample="http://bit.ly/claim-free-netflix-promo-2026" data-autosubmit="true">
+                    ⚠️ Masked Shortener Link
+                </button>
+                <button type="button" class="sample-pill" data-target="url-input-field" data-sample="https://www.google.com" data-autosubmit="true">
+                    ✔ Genuine HTTPS Domain
+                </button>
+            </div>
+        </form>
 
-        <h3>
-            Detected Indicators
-        </h3>
+        <!-- Dynamic Results Container -->
+        <div id="scanner-result-box" style="{% if not result %}display: none;{% endif %} margin-top: 30px;">
+            {% if result %}
+            <div class="result-hud-panel">
+                <div class="result-threat-header">
+                    <div class="gauge-wrapper">
+                        <svg class="gauge-svg" viewBox="0 0 120 120">
+                            <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+                            <circle 
+                                class="gauge-meter {% if result.score >= 60 %}danger{% elif result.score >= 25 %}warning{% else %}safe{% endif %}" 
+                                id="hud-gauge-circle" 
+                                cx="60" cy="60" r="50" 
+                                style="stroke-dashoffset: {{ 345 - (result.score / 100) * 345 }};"
+                            ></circle>
+                        </svg>
+                        <div class="gauge-content">
+                            <div class="gauge-score {% if result.score >= 60 %}danger{% elif result.score >= 25 %}warning{% else %}safe{% endif %}">
+                                {{ result.score }}
+                            </div>
+                            <div class="gauge-label">RISK SCORE</div>
+                        </div>
+                    </div>
 
-        <ul>
+                    <div class="threat-meta-details">
+                        <div class="threat-status-badge {% if result.score >= 60 %}danger{% elif result.score >= 25 %}warning{% else %}safe{% endif %}">
+                            <span>●</span> THREAT STATUS: {{ result.status }}
+                        </div>
+                        <h2>URL Threat Analysis Report</h2>
+                        <p class="threat-recommendation">{{ result.recommendation }}</p>
+                    </div>
+                </div>
 
-            {% for item in result.indicators %}
+                {% if result.breakdown %}
+                <div class="breakdown-section">
+                    <h4 class="breakdown-title">📊 Multi-Vector Threat Breakdown</h4>
+                    <div class="breakdown-grid">
+                        {% for key, val in result.breakdown.items() %}
+                        <div class="breakdown-item">
+                            <div class="breakdown-item-header">
+                                <span>{{ key.replace('_', ' ').upper() }}</span>
+                                <span>{{ val }}%</span>
+                            </div>
+                            <div class="breakdown-bar-track">
+                                <div class="breakdown-bar-fill" style="width: {{ val }}%;"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
 
-            <li>
-                {{ item }}
-            </li>
+                <div class="indicators-section">
+                    <h4 class="breakdown-title">🔍 Heuristic Indicators & Findings</h4>
+                    <ul class="indicators-list">
+                        {% for item in result.indicators %}
+                        <li class="indicator-item {% if result.score >= 60 %}risk{% elif result.score >= 25 %}warn{% else %}good{% endif %}">
+                            <span>{% if result.score >= 60 %}⛔{% elif result.score >= 25 %}⚠️{% else %}✔{% endif %}</span>
+                            <span>{{ item }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
 
-            {% endfor %}
-
-        </ul>
+                <div style="display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap;">
+                    <a href="{{ url_for('report') }}" class="btn btn-sm danger">🚨 Report This Threat</a>
+                    <button type="button" class="btn btn-sm secondary" onclick="navigator.clipboard.writeText('Threat Score: {{ result.score }}/100 | Status: {{ result.status }}'); alert('Summary copied to clipboard!');">📋 Copy Threat Report</button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
 
     </div>
-
-    {% endif %}
-
-</section>
+</div>
 
 {% endblock %}

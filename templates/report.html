@@ -2,133 +2,101 @@
 
 {% block content %}
 
-<section class="scanner-page">
+<div class="scanner-page-container">
+    <div class="scanner-hud-box">
+        
+        <div class="scanner-header-center">
+            <div class="section-tag">
+                <span>🚨</span> THREAT SUBMISSION PORTAL
+            </div>
+            <h1 class="section-title">
+                Report a Cyber Scam
+            </h1>
+            <p class="section-subtitle" style="margin: 0 auto;">
+                Submit suspicious links, scam phone numbers, fake APKs, or fraudulent messages to alert the community and enrich our threat intelligence.
+            </p>
+        </div>
 
-    <p class="tag">
-        🚨 COMMUNITY SCAM REPORT
-    </p>
+        {% if success %}
+        <div class="success-box" style="margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; gap: 15px;">
+            <div>
+                <strong style="font-size: 16px;">✔ Threat Interception Logged!</strong>
+                <p style="margin-top: 4px; font-weight: normal; color: #16803c;">Your report has been securely added to the community defense feed.</p>
+            </div>
+            <a href="{{ url_for('reports') }}" class="btn btn-sm">
+                View Community Feed &rarr;
+            </a>
+        </div>
+        {% endif %}
 
-    <h1>
-        Report a Scam
-    </h1>
+        <form method="POST">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <label style="color: var(--text-muted); font-size: 14px;">Scam Category</label>
+                    <select name="category" class="scanner-input" required style="margin-top: 6px;">
+                        <option value="">Select threat category...</option>
+                        <option value="Banking Fraud">Banking & OTP Phishing</option>
+                        <option value="Electricity Scam">Electricity Power Cut Threat</option>
+                        <option value="UPI Fraud">UPI / QR Code Fraud</option>
+                        <option value="Job Scam">Telegram / Work-From-Home Task Scam</option>
+                        <option value="Lottery Scam">Lottery & Prize Scheme</option>
+                        <option value="Phishing Link">Malicious URL / Lookalike Website</option>
+                        <option value="Other">Other Digital Threat</option>
+                    </select>
+                </div>
 
-    <p>
-        Report suspicious websites, messages or online scams
-        so other users can be aware of them.
-    </p>
+                <div>
+                    <label style="color: var(--text-muted); font-size: 14px;">Threat Severity</label>
+                    <select name="severity" class="scanner-input" style="margin-top: 6px;">
+                        <option value="Critical">🔴 Critical (Immediate Financial Loss Risk)</option>
+                        <option value="High" selected>🟠 High (Phishing / Credential Theft)</option>
+                        <option value="Medium">🟡 Medium (Spam / Unverified Lure)</option>
+                    </select>
+                </div>
+            </div>
 
+            <div style="margin-top: 15px;">
+                <label style="color: var(--text-muted); font-size: 14px;">Report Title / Summary</label>
+                <input 
+                    type="text" 
+                    name="title" 
+                    class="scanner-input" 
+                    placeholder="e.g. Fake SBI Reward Points APK Link received via SMS" 
+                    required 
+                    style="margin-top: 6px;"
+                >
+            </div>
 
-    {% if success %}
+            <div style="margin-top: 15px;">
+                <label style="color: var(--text-muted); font-size: 14px;">Incident Details & Modus Operandi</label>
+                <textarea 
+                    name="description" 
+                    class="scanner-input scanner-textarea" 
+                    placeholder="Describe what the scammers asked you to do, what links/apps were shared, and any specific threats made..." 
+                    required 
+                    style="margin-top: 6px; min-height: 120px;"
+                ></textarea>
+            </div>
 
-    <div class="success-box">
+            <div style="margin-top: 15px;">
+                <label style="color: var(--text-muted); font-size: 14px;">Scammer Contact / Website / UPI ID (Optional)</label>
+                <input 
+                    type="text" 
+                    name="contact" 
+                    class="scanner-input" 
+                    placeholder="e.g. http://sbi-fake.xyz or +91 98765-XXXXX or scammer@upi" 
+                    style="margin-top: 6px;"
+                >
+            </div>
 
-        ✅ Report submitted successfully!
-
-        <br><br>
-
-        <a href="{{ url_for('reports') }}">
-            View Community Reports →
-        </a>
-
-    </div>
-
-    {% endif %}
-
-
-    <form method="POST"
-          class="report-form">
-
-        <label>
-            Scam Type
-        </label>
-
-        <select name="category" required>
-
-            <option value="">
-                Select scam type
-            </option>
-
-            <option value="Phishing Website">
-                Phishing Website
-            </option>
-
-            <option value="SMS Scam">
-                SMS Scam
-            </option>
-
-            <option value="WhatsApp Scam">
-                WhatsApp Scam
-            </option>
-
-            <option value="Banking Scam">
-                Banking Scam
-            </option>
-
-            <option value="UPI Scam">
-                UPI Scam
-            </option>
-
-            <option value="Job Scam">
-                Job Scam
-            </option>
-
-            <option value="Prize Scam">
-                Prize / Lottery Scam
-            </option>
-
-            <option value="Other">
-                Other
-            </option>
-
-        </select>
-
-
-        <label>
-            Website / Phone Number / Message Identifier
-        </label>
-
-        <input
-            type="text"
-            name="target"
-            placeholder="Example: suspicious-site.com"
-            required
-        >
-
-
-        <label>
-            Describe the Scam
-        </label>
-
-        <textarea
-            name="description"
-            rows="7"
-            placeholder="Explain what happened..."
-            required></textarea>
-
-
-        <button type="submit"
-                class="btn">
-
-            🚨 Submit Report
-
-        </button>
-
-    </form>
-
-
-    <div class="info-box">
-
-        <h2>
-            Important
-        </h2>
-
-        <p>
-            Do not enter passwords, OTPs, CVV numbers,
-            UPI PINs or other private information in this form.
-        </p>
+            <div style="margin-top: 25px; display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="submit" class="btn danger">
+                    <span>🚨</span> Publish Threat Report
+                </button>
+            </div>
+        </form>
 
     </div>
-
-</section>
+</div>
 
 {% endblock %}

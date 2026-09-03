@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="scanner-page-container">
+    <div class="scanner-hud-box" style="text-align: center; padding: 60px 30px;">
+        
+        <div class="section-tag" style="margin-bottom: 15px;">
+            <span>🛡️</span> CYBERSHIELD DEFENSE HUB
+        </div>
+
+        <h1 class="section-title">
+            Threat Intelligence Scanner
+        </h1>
+
+        <p class="section-subtitle" style="margin: 0 auto 35px;">
+            Choose a specialized detection engine below to inspect suspicious digital content.
+        </p>
+
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="{{ url_for('url_checker') }}" class="btn">
+                <span>🔗</span> Launch URL Phishing Scanner
+            </a>
+
+            <a href="{{ url_for('message_checker') }}" class="btn secondary">
+                <span>📩</span> Launch SMS & Chat Analyzer
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

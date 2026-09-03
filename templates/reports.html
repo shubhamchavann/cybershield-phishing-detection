@@ -2,75 +2,105 @@
 
 {% block content %}
 
-<section class="scanner-page">
-
-    <p class="tag">
-        🌐 COMMUNITY DATABASE
-    </p>
-
-    <h1>
-        Reported Scams
-    </h1>
-
-    <p>
-        These reports are shared to increase awareness
-        about suspicious websites, messages and scams.
-    </p>
-
-
-    {% if reports %}
-
-    <div class="reports-list">
-
-        {% for report in reports %}
-
-        <div class="report-card">
-
-            <div class="report-header">
-
-                <span class="report-category">
-                    {{ report["category"] }}
-                </span>
-
-                <span>
-                    {{ report["created_at"] }}
-                </span>
-
+<div class="container" style="padding-top: 40px; padding-bottom: 80px;">
+    
+    <div class="reports-feed-header">
+        <div>
+            <div class="section-tag">
+                <span>📋</span> THREAT FEED & COMMUNITY INTELLIGENCE
             </div>
-
-
-            <h2>
-                🚨 {{ report["target"] }}
-            </h2>
-
-
-            <p>
-                {{ report["description"] }}
+            <h1 class="section-title">
+                Reported Scams & Incidents
+            </h1>
+            <p class="section-subtitle">
+                Explore real-world phishing and scam incidents reported by verified citizens to detect emerging cyber attack vectors.
             </p>
-
         </div>
 
-        {% endfor %}
-
+        <a href="{{ url_for('report') }}" class="btn danger">
+            <span>🚨</span> Report New Scam
+        </a>
     </div>
 
+    <!-- SEARCH & FILTER BAR -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px;">
+        <div>
+            <input 
+                type="text" 
+                id="reports-search-input" 
+                class="scanner-input" 
+                placeholder="🔍 Search threat reports by keyword, bank name, phone number, or URL..." 
+                style="margin: 0;"
+            >
+        </div>
+
+        <div class="filter-pills-bar">
+            <button type="button" class="filter-pill active" data-filter="all">All Threats</button>
+            <button type="button" class="filter-pill" data-filter="Banking Fraud">Banking / OTP</button>
+            <button type="button" class="filter-pill" data-filter="Electricity Scam">Power Cut SMS</button>
+            <button type="button" class="filter-pill" data-filter="UPI Fraud">UPI / QR Code</button>
+            <button type="button" class="filter-pill" data-filter="Job Scam">Telegram Job Scam</button>
+            <button type="button" class="filter-pill" data-filter="Phishing">Phishing Links</button>
+        </div>
+    </div>
+
+    <!-- REPORTS LIST -->
+    {% if reports %}
+    <div class="reports-grid" id="reports-cards-container">
+        {% for report in reports %}
+        <div class="report-item-card {% if report['severity'] == 'Critical' %}critical{% elif report['severity'] == 'High' %}high{% endif %}" data-category="{{ report['category'] }}">
+            
+            <div class="report-card-top">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="report-badge-category">
+                        {{ report["category"] }}
+                    </span>
+                    <span class="ticker-tag {% if report['severity'] == 'Critical' %}tag-red{% elif report['severity'] == 'High' %}tag-amber{% else %}tag-blue{% endif %}">
+                        {{ report["severity"] or 'High' }} SEVERITY
+                    </span>
+                </div>
+                <div class="report-timestamp">
+                    🕒 {{ report["created_at"] }}
+                </div>
+            </div>
+
+            <h3>{{ report["title"] }}</h3>
+            
+            <p>{{ report["description"] }}</p>
+
+            {% if report["contact"] %}
+            <div class="report-contact-box">
+                <strong>Targeted Link / Scammer Contact:</strong> {{ report["contact"] }}
+            </div>
+            {% endif %}
+
+            <div class="report-footer-actions">
+                <button type="button" class="upvote-btn" data-id="{{ report['id'] }}">
+                    <span>👍 Helpful</span>
+                    <span class="upvote-count">{{ report["upvotes"] or 0 }}</span>
+                </button>
+                <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-dim);">
+                    Incident ID: #CS-{{ report["id"] }}
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
 
     {% else %}
 
-    <div class="info-box">
-
-        <h2>
-            No reports yet
-        </h2>
-
-        <p>
-            Be the first person to report a suspicious scam.
-        </p>
-
+    <div class="scanner-hud-box" style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 50px; margin-bottom: 15px;">🛡️</div>
+        <h2>No Community Reports Found</h2>
+        <p style="color: var(--text-muted); margin-top: 10px; margin-bottom: 25px;">Be the first person to report a scam and help secure the community.</p>
+        <a href="{{ url_for('report') }}" class="btn danger">
+            <span>🚨</span> Report a Scam
+        </a>
     </div>
 
     {% endif %}
 
-</section>
+</div>
 
 {% endblock %}

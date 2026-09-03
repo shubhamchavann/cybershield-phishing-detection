@@ -2,96 +2,173 @@
 
 {% block content %}
 
-<section class="scanner-page">
-
-    <p class="tag">
-        🇮🇳 OFFICIAL CYBER FRAUD HELP
-    </p>
-
-    <h1>
-        What To Do If You Are Scammed
-    </h1>
-
-
-    <div class="help-card">
-
-        <h2>
-            📞 Cyber Fraud Helpline
-        </h2>
-
-        <p>
-            If you have suffered a financial cyber fraud
-            in India, you can contact:
+<div class="container" style="padding-top: 40px; padding-bottom: 80px;">
+    
+    <div class="scanner-header-center">
+        <div class="section-tag">
+            <span>🆘</span> EMERGENCY CYBER RESPONSE
+        </div>
+        <h1 class="section-title">
+            Immediate Cyber Incident Help
+        </h1>
+        <p class="section-subtitle" style="margin: 0 auto;">
+            If you have fallen victim to an online scam or financial fraud, act immediately within the "Golden Hours" to freeze illicit fund transfers.
         </p>
+    </div>
 
-        <div class="official-number">
-            1930
+    <!-- 1. SOS EMERGENCY CALLOUT CARD -->
+    <div class="sos-emergency-card">
+        <div>
+            <div class="sos-title">
+                <span>🚨</span> National Cyber Financial Fraud Helpline
+            </div>
+            <p style="color: #ffffff; font-size: 16px; max-width: 600px; margin-bottom: 20px; line-height: 1.6;">
+                Operated by the Ministry of Home Affairs (MHA), Government of India. Dial immediately if money has been deducted from your bank, UPI, or card.
+            </p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="tel:1930" class="btn danger">
+                    <span>📞</span> Call 1930 Now
+                </a>
+                <a href="https://cybercrime.gov.in" target="_blank" rel="noopener noreferrer" class="btn secondary">
+                    <span>🌐</span> cybercrime.gov.in ↗
+                </a>
+            </div>
         </div>
 
-        <p>
-            National Cyber Crime Helpline
+        <div class="sos-number-box">
+            <div style="font-family: var(--font-mono); font-size: 13px; color: var(--danger); font-weight: bold; margin-bottom: 6px;">
+                EMERGENCY DIAL
+            </div>
+            <div class="sos-number">1930</div>
+            <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 6px;">
+                24x7 TOLL-FREE (INDIA)
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 2. INTERACTIVE INCIDENT PLAYBOOK (WHAT HAPPENED TO YOU?) -->
+    <div style="margin-bottom: 20px;">
+        <h2 class="section-title" style="font-size: 28px;">
+            ⚡ Interactive Incident Containment Playbook
+        </h2>
+        <p class="section-subtitle">
+            Select your situation below to execute immediate damage-control steps:
+        </p>
+    </div>
+
+    <div class="incident-wizard-grid">
+        
+        <!-- Scenario 1: Money Debited -->
+        <div class="incident-card">
+            <div style="font-size: 32px; margin-bottom: 12px;">💸</div>
+            <h3 style="font-family: var(--font-heading); font-size: 20px; margin-bottom: 10px; color: var(--danger);">
+                Money Was Debited
+            </h3>
+            <p style="color: var(--text-muted); font-size: 14px;">
+                Immediate containment steps to stop intermediary transfers:
+            </p>
+
+            <ul class="incident-step-list">
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-1">
+                    <label for="check-1">Call <strong>1930</strong> immediately within 2 hours to initiate a payment freeze.</label>
+                </li>
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-2">
+                    <label for="check-2">Call your bank's emergency block number to freeze your debit/credit card and netbanking.</label>
+                </li>
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-3">
+                    <label for="check-3">File an official complaint on <a href="https://cybercrime.gov.in" target="_blank" style="color: var(--primary);">cybercrime.gov.in</a>.</label>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Scenario 2: Shared OTP / PIN -->
+        <div class="incident-card">
+            <div style="font-size: 32px; margin-bottom: 12px;">🔐</div>
+            <h3 style="font-family: var(--font-heading); font-size: 20px; margin-bottom: 10px; color: var(--warning);">
+                I Shared OTP / PIN
+            </h3>
+            <p style="color: var(--text-muted); font-size: 14px;">
+                Prevent impending account takeover:
+            </p>
+
+            <ul class="incident-step-list">
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-4">
+                    <label for="check-4">Immediately reset your UPI PIN and Netbanking login password from a safe device.</label>
+                </li>
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-5">
+                    <label for="check-5">Temporarily turn off International Transactions and Online E-commerce on your debit card.</label>
+                </li>
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-6">
+                    <label for="check-6">Notify your bank to monitor suspicious outbound transactions on your account.</label>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Scenario 3: Installed APK / Clicked Link -->
+        <div class="incident-card">
+            <div style="font-size: 32px; margin-bottom: 12px;">📱</div>
+            <h3 style="font-family: var(--font-heading); font-size: 20px; margin-bottom: 10px; color: var(--primary);">
+                Installed Unknown APK / App
+            </h3>
+            <p style="color: var(--text-muted); font-size: 14px;">
+                Neutralize malware and device spyware:
+            </p>
+
+            <ul class="incident-step-list">
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-7">
+                    <label for="check-7">Immediately turn on <strong>Airplane Mode</strong> or disconnect Wi-Fi and Mobile Data.</label>
+                </li>
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-8">
+                    <label for="check-8">Go to Settings &gt; Apps and uninstall the rogue APK or Remote Access tool (AnyDesk, TeamViewer).</label>
+                </li>
+                <li class="incident-step-item">
+                    <input type="checkbox" class="incident-check" id="check-9">
+                    <label for="check-9">Perform a full antivirus scan or device factory reset to purge trojans.</label>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+
+    <!-- 3. EVIDENCE PRESERVATION CHECKLIST -->
+    <div class="scanner-hud-box" style="margin-top: 40px;">
+        <h3 style="font-family: var(--font-heading); font-size: 22px; margin-bottom: 15px; color: var(--text-main);">
+            📸 Crucial Evidence to Save for Police & Bank Complaints
+        </h3>
+        <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 20px;">
+            Having this documentation ready expedites case processing with law enforcement:
         </p>
 
+        <div class="breakdown-grid">
+            <div class="breakdown-item">
+                <strong style="color: var(--primary);">1. Bank SMS & Transaction IDs</strong>
+                <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Save original bank debit SMS messages and 12-digit UTR/UPI reference numbers.</p>
+            </div>
+            <div class="breakdown-item">
+                <strong style="color: var(--primary);">2. Scammer Numbers & Chat Backups</strong>
+                <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Take screenshots of WhatsApp / Telegram chats and export conversation history.</p>
+            </div>
+            <div class="breakdown-item">
+                <strong style="color: var(--primary);">3. URL Links & APK File Names</strong>
+                <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Note the exact website link or file name received from the scammer.</p>
+            </div>
+            <div class="breakdown-item">
+                <strong style="color: var(--primary);">4. Bank Account Statement</strong>
+                <p style="color: var(--text-muted); font-size: 13.5px; margin-top: 4px;">Download a PDF statement from netbanking showing the fraudulent deduction.</p>
+            </div>
+        </div>
     </div>
 
-
-    <div class="help-card">
-
-        <h2>
-            🌐 National Cyber Crime Reporting Portal
-        </h2>
-
-        <p>
-            You can report cybercrime through the official
-            Government of India cybercrime reporting portal.
-        </p>
-
-        <a
-            href="https://www.cybercrime.gov.in/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn">
-
-            Open Official Cybercrime Portal →
-
-        </a>
-
-    </div>
-
-
-    <div class="help-card">
-
-        <h2>
-            ⚠️ Remember
-        </h2>
-
-        <ul>
-
-            <li>
-                Never share OTP.
-            </li>
-
-            <li>
-                Never share UPI PIN.
-            </li>
-
-            <li>
-                Never share CVV.
-            </li>
-
-            <li>
-                Do not click suspicious links.
-            </li>
-
-            <li>
-                Save screenshots and transaction details
-                if a fraud occurs.
-            </li>
-
-        </ul>
-
-    </div>
-
-</section>
+</div>
 
 {% endblock %}

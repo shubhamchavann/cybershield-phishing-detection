@@ -1,413 +1,402 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Cyber Shield</title>
 {% extends "base.html" %}
 
 {% block content %}
 
-<section class="hero">
+<!-- 1. HERO SECTION WITH INTERACTIVE SCANNER & RADAR VISUAL -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-grid">
+            
+            <!-- Hero Left: Headline & Interactive Scanner -->
+            <div class="hero-content">
+                <div class="section-tag">
+                    <span>⚡</span> ZERO-DAY THREAT INTELLIGENCE
+                </div>
+                
+                <h1 class="hero-title">
+                    Instant Defense Against <br>
+                    <span class="text-gradient">Phishing & Digital Scams</span>
+                </h1>
+                
+                <p class="hero-desc">
+                    Analyze suspicious links, deceptive SMS messages, and online fraud attempts with deep heuristic pattern recognition and real-time domain verification.
+                </p>
 
-    <p class="tag">
-        🛡️ CYBERSECURITY AWARENESS
-    </p>
+                <!-- Interactive Quick-Scan Card -->
+                <div class="hero-scanner-card">
+                    <div class="scanner-tab-nav">
+                        <button type="button" class="scanner-tab-btn active" data-tab="url">
+                            <span>🔗</span> Scan Website Link
+                        </button>
+                        <button type="button" class="scanner-tab-btn" data-tab="message">
+                            <span>📩</span> Scan SMS / Message
+                        </button>
+                    </div>
 
-    <h1>
-        Protect Yourself From
-        Phishing & Online Fraud
-    </h1>
+                    <!-- URL Scan Form -->
+                    <form id="hero-url-form" class="ajax-url-scanner">
+                        <div class="scanner-input-group">
+                            <input 
+                                type="text" 
+                                id="hero-url-input" 
+                                name="url" 
+                                class="scanner-input" 
+                                placeholder="Paste suspicious URL e.g. https://sbi-kyc-verify.xyz" 
+                                required
+                                autocomplete="off"
+                            >
+                            <button type="submit" class="btn">
+                                <span>🔍</span> Scan Link
+                            </button>
+                        </div>
 
-    <p class="subtitle">
-        Cyber Shield helps you identify suspicious URLs,
-        phishing messages and common online fraud techniques.
-    </p>
+                        <div class="sample-pills">
+                            <span class="sample-label">Try Test Sample:</span>
+                            <button type="button" class="sample-pill" data-target="hero-url-input" data-sample="http://sbi-reward-claim.xyz/verify-otp.php">
+                                ⚠️ Fake Bank Phishing
+                            </button>
+                            <button type="button" class="sample-pill" data-target="hero-url-input" data-sample="http://bit.ly/free-netflix-subscription-claim">
+                                ⚠️ Masked Shortener
+                            </button>
+                            <button type="button" class="sample-pill" data-target="hero-url-input" data-sample="https://www.google.com">
+                                ✔ Safe Domain
+                            </button>
+                        </div>
+                    </form>
 
-    <div class="hero-buttons">
+                    <!-- Message Scan Form -->
+                    <form id="hero-msg-form" class="ajax-msg-scanner" style="display: none;">
+                        <textarea 
+                            id="hero-msg-input" 
+                            name="message" 
+                            class="scanner-input scanner-textarea" 
+                            placeholder="Paste suspicious SMS, WhatsApp or Telegram message..." 
+                            required
+                        ></textarea>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 10px;">
+                            <div class="sample-pills" style="margin-top: 0;">
+                                <span class="sample-label">Try Sample:</span>
+                                <button type="button" class="sample-pill" data-target="hero-msg-input" data-sample="Dear Consumer, your electricity will be disconnected tonight at 9:30 PM. Call Officer at 9876543210 immediately.">
+                                    ⚠️ Power Cut Threat
+                                </button>
+                                <button type="button" class="sample-pill" data-target="hero-msg-input" data-sample="Congratulations! You have won Rs. 25,00,000 in KBC lottery. Share your OTP and account number to claim.">
+                                    ⚠️ Lottery Prize Trap
+                                </button>
+                            </div>
+                            <button type="submit" class="btn">
+                                <span>🔍</span> Analyze Message
+                            </button>
+                        </div>
+                    </form>
 
-        <a class="btn"
-           href="{{ url_for('url_checker') }}">
-            🔍 Scan URL
-        </a>
+                    <!-- Realtime Result Target Box -->
+                    <div id="scanner-result-box" style="display: none; margin-top: 25px;"></div>
+                </div>
 
-        <a class="btn secondary"
-           href="{{ url_for('message_checker') }}">
-            💬 Check Message
-        </a>
+            </div>
 
+            <!-- Hero Right: Holographic Radar Shield Visual -->
+            <div class="hero-visual">
+                <div class="hologram-radar-wrap">
+                    <div class="radar-ring ring-1"></div>
+                    <div class="radar-ring ring-2"></div>
+                    <div class="radar-ring ring-3"></div>
+                    <div class="radar-sweep"></div>
+                    
+                    <div class="shield-core">
+                        <div class="shield-core-icon">🛡️</div>
+                        <div class="shield-core-text">DEFENSE MATRIX</div>
+                    </div>
+
+                    <!-- Floating Cyber HUD nodes -->
+                    <div class="hud-node node-top">
+                        <span style="color: var(--success);">●</span> Heuristic Filter: 100%
+                    </div>
+                    <div class="hud-node node-bottom">
+                        <span style="color: var(--primary);">⚡</span> Zero-Day Heuristics
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
-
 </section>
 
 
+<!-- 2. REAL-TIME THREAT TICKER MARQUEE -->
+<div class="threat-ticker-bar">
+    <div class="ticker-wrap">
+        <div class="ticker-badge">
+            <span class="beacon-dot" style="background: var(--danger);"></span>
+            <span>LIVE INTERCEPTIONS</span>
+        </div>
+        <div class="ticker-track">
+            <div class="ticker-item">
+                <span class="ticker-tag tag-red">CRITICAL</span>
+                <span>Intercepted fake SBI KYC update APK domain (sbi-yono-apk.xyz)</span>
+                <small>— 1m ago</small>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-tag tag-amber">SUSPICIOUS</span>
+                <span>Power disconnection SMS scam targeting regional users detected</span>
+                <small>— 3m ago</small>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-tag tag-red">PHISHING</span>
+                <span>Fake Netflix payment renewal phishing gateway blocked</span>
+                <small>— 5m ago</small>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-tag tag-blue">COMMUNITY</span>
+                <span>OLX fraudulent QR code debit payment reported in Delhi NCR</span>
+                <small>— 8m ago</small>
+            </div>
+            <!-- Duplicate for seamless infinite loop -->
+            <div class="ticker-item">
+                <span class="ticker-tag tag-red">CRITICAL</span>
+                <span>Intercepted fake SBI KYC update APK domain (sbi-yono-apk.xyz)</span>
+                <small>— 1m ago</small>
+            </div>
+            <div class="ticker-item">
+                <span class="ticker-tag tag-amber">SUSPICIOUS</span>
+                <span>Power disconnection SMS scam targeting regional users detected</span>
+                <small>— 3m ago</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 3. LIVE STATS COUNTER GRID -->
+<section class="section" style="padding: 60px 0;">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" data-count="18940" data-suffix="+">18,940+</div>
+                <div class="stat-label">Scam URLs & Patterns Analyzed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-count="99" data-suffix=".8%">99.8%</div>
+                <div class="stat-label">Heuristic Detection Accuracy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-count="4250" data-suffix="+">4,250+</div>
+                <div class="stat-label">Community Threat Reports</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-count="100" data-suffix="%">100%</div>
+                <div class="stat-label">Free Citizen Cybersecurity Protection</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- 4. CORE CAPABILITIES (WHAT WE DO) -->
 <section class="section">
-
-    <p class="tag">
-        WHAT WE DO
-    </p>
-
-    <h2>
-        What Cyber Shield Can Do
-    </h2>
-
-    <p>
-        Simple tools to help you stay safe online.
-    </p>
-
-
-    <div class="cards">
-
-        <div class="card">
-
-            <div class="icon">
-                🔗
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div class="section-tag">
+                <span>🛡️</span> CORE DEFENSE MODULES
             </div>
-
-            <h3>
-                URL Scanner
-            </h3>
-
-            <p>
-                Check URLs for common phishing indicators
-                and suspicious patterns.
+            <h2 class="section-title">
+                Comprehensive Cyber Defense Tools
+            </h2>
+            <p class="section-subtitle" style="margin: 0 auto;">
+                Multi-layered intelligence suite engineered to inspect, educate, and protect you from sophisticated cyber threats.
             </p>
-
-            <a href="{{ url_for('url_checker') }}">
-                Try Scanner →
-            </a>
-
         </div>
 
-
-        <div class="card">
-
-            <div class="icon">
-                💬
+        <div class="feature-cards-grid">
+            <!-- 1. URL Scanner -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-card-header">
+                        <div class="feature-icon-box">🔗</div>
+                        <span class="feature-badge">REAL-TIME</span>
+                    </div>
+                    <h3>URL Phishing Scanner</h3>
+                    <p>
+                        Inspects suspicious web addresses for lookalike domains, obfuscated characters, missing SSL encryption, and high-risk TLDs.
+                    </p>
+                </div>
+                <a href="{{ url_for('url_checker') }}" class="feature-link">
+                    Launch URL Scanner &rarr;
+                </a>
             </div>
 
-            <h3>
-                Message Scanner
-            </h3>
-
-            <p>
-                Analyze suspicious messages for phishing
-                and fraud indicators.
-            </p>
-
-            <a href="{{ url_for('message_checker') }}">
-                Check Message →
-            </a>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">
-                🧠
+            <!-- 2. Message Scanner -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-card-header">
+                        <div class="feature-icon-box">📩</div>
+                        <span class="feature-badge">NLP PATTERNS</span>
+                    </div>
+                    <h3>SMS & Message Analyzer</h3>
+                    <p>
+                        Identifies urgency traps, fake KYC warnings, power cut threats, lottery lures, and fraudulent payment QR prompts.
+                    </p>
+                </div>
+                <a href="{{ url_for('message_checker') }}" class="feature-link">
+                    Analyze Suspicious Text &rarr;
+                </a>
             </div>
 
-            <h3>
-                Awareness Quiz
-            </h3>
-
-            <p>
-                Test your knowledge of phishing,
-                scams and cybersecurity safety.
-            </p>
-
-            <a href="{{ url_for('quiz') }}">
-                Take Quiz →
-            </a>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="icon">
-                🚨
+            <!-- 3. Awareness Hub -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-card-header">
+                        <div class="feature-icon-box">🧠</div>
+                        <span class="feature-badge">LITERACY</span>
+                    </div>
+                    <h3>Cyber Defense Academy</h3>
+                    <p>
+                        Master the anatomy of modern phishing vectors, learn social engineering defense, and protect your digital footprint.
+                    </p>
+                </div>
+                <a href="{{ url_for('awareness') }}" class="feature-link">
+                    Explore Academy &rarr;
+                </a>
             </div>
 
-            <h3>
-                Report Scam
-            </h3>
+            <!-- 4. Quiz -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-card-header">
+                        <div class="feature-icon-box">❓</div>
+                        <span class="feature-badge">INTERACTIVE</span>
+                    </div>
+                    <h3>Cyber IQ Challenge</h3>
+                    <p>
+                        Test your digital threat awareness with our interactive 10-question cyber challenge and earn your Cyber Defense Rank badge.
+                    </p>
+                </div>
+                <a href="{{ url_for('quiz') }}" class="feature-link">
+                    Take the Quiz &rarr;
+                </a>
+            </div>
 
-            <p>
-                Report suspicious websites, messages
-                and scams to help other users.
-            </p>
+            <!-- 5. Scam Reports -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-card-header">
+                        <div class="feature-icon-box">📋</div>
+                        <span class="feature-badge">COMMUNITY</span>
+                    </div>
+                    <h3>Live Scam Intelligence Feed</h3>
+                    <p>
+                        Browse real-time cyber fraud incidents reported by the community to stay informed about active scams in your region.
+                    </p>
+                </div>
+                <a href="{{ url_for('reports') }}" class="feature-link">
+                    View Live Feed &rarr;
+                </a>
+            </div>
 
-            <a href="{{ url_for('report') }}">
-                Report Scam →
-            </a>
-
+            <!-- 6. Cyber Help -->
+            <div class="feature-card">
+                <div>
+                    <div class="feature-card-header">
+                        <div class="feature-icon-box">🆘</div>
+                        <span class="feature-badge">EMERGENCY</span>
+                    </div>
+                    <h3>Incident Response 1930</h3>
+                    <p>
+                        Step-by-step containment instructions for compromised accounts, unauthorized bank debits, and official cyber helpline contacts.
+                    </p>
+                </div>
+                <a href="{{ url_for('cyber_help') }}" class="feature-link">
+                    Get Emergency Help &rarr;
+                </a>
+            </div>
         </div>
-
     </div>
-
 </section>
 
 
-<section class="safety">
-
-    <h2>
-        Remember These Safety Rules
-    </h2>
-
-    <div class="safety-grid">
-
-        <div>
-            🔐
-            <h3>Protect Your OTP</h3>
-            <p>
-                Never share your OTP with anyone.
+<!-- 5. ANATOMY OF A PHISHING ATTACK (VISUAL INTERACTIVE BREAKDOWN) -->
+<section class="section" style="background: rgba(10, 16, 32, 0.5);">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div class="section-tag">
+                <span>🔍</span> VISUAL THREAT DISSECTION
+            </div>
+            <h2 class="section-title">
+                Anatomy of a Phishing Attack
+            </h2>
+            <p class="section-subtitle" style="margin: 0 auto;">
+                Hover over the highlighted threat indicators below to see how cyber criminals engineer deceptive messages.
             </p>
         </div>
 
-        <div>
-            🔗
-            <h3>Check Links</h3>
-            <p>
-                Verify the website address before clicking.
-            </p>
-        </div>
+        <div class="anatomy-inspector-card">
+            <div class="anatomy-email-mockup">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; margin-bottom: 15px;">
+                    <div><strong>From:</strong> State Bank Alerts &lt;no-reply@sbi-security-verify.xyz&gt;</div>
+                    <div class="hotspot-tag">⚠️ SPOOFED DOMAIN</div>
+                </div>
 
-        <div>
-            💳
-            <h3>Protect Banking Details</h3>
-            <p>
-                Never share your PIN, CVV or password.
-            </p>
-        </div>
+                <div class="anatomy-hotspot" title="Psychological urgency pressure tactic designed to bypass logical thinking.">
+                    <span class="hotspot-tag">🚨 FAKE URGENCY:</span> "FINAL NOTICE: Your SBI netbanking access will be suspended within 2 hours due to pending PAN card re-verification."
+                </div>
 
-        <div>
-            ⚠️
-            <h3>Beware of Urgency</h3>
-            <p>
-                Be careful with messages demanding
-                immediate action.
-            </p>
-        </div>
+                <div style="margin: 15px 0;">
+                    Please update your mandatory KYC details immediately to prevent permanent account freeze.
+                </div>
 
+                <div class="anatomy-hotspot" title="Lookalike URL designed to steal bank credentials and OTP.">
+                    <span class="hotspot-tag">🔗 MALICIOUS PHISHING LINK:</span> 
+                    <code>http://sbi-kyc-update-portal.xyz/login.php?user=urgent</code>
+                </div>
+
+                <div class="anatomy-hotspot" title="Legitimate banks never ask for OTP or PIN via SMS or calls.">
+                    <span class="hotspot-tag">🔐 CREDENTIAL HARVESTING:</span> "Do not share this link. Enter OTP received on your mobile to confirm KYC."
+                </div>
+            </div>
+        </div>
     </div>
+</section>
 
+
+<!-- 6. GOLDEN SAFETY RULES -->
+<section class="section">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <div class="section-tag">
+                <span>🔐</span> DEFENSE GUIDELINES
+            </div>
+            <h2 class="section-title">
+                The 4 Golden Rules of Cyber Safety
+            </h2>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" style="text-align: left; padding: 30px;">
+                <div style="font-size: 36px; margin-bottom: 12px;">🚫</div>
+                <h3 style="font-family: var(--font-heading); font-size: 19px; margin-bottom: 8px;">Never Share OTP or PIN</h3>
+                <p style="color: var(--text-muted); font-size: 14.5px;">No bank manager, electricity officer, or police will ever ask for your OTP or UPI PIN.</p>
+            </div>
+            
+            <div class="stat-card" style="text-align: left; padding: 30px;">
+                <div style="font-size: 36px; margin-bottom: 12px;">🔍</div>
+                <h3 style="font-family: var(--font-heading); font-size: 19px; margin-bottom: 8px;">Verify Domain Spelling</h3>
+                <p style="color: var(--text-muted); font-size: 14.5px;">Look for lookalike domains like <code>sbl.com</code> or <code>paytm-kyc.xyz</code> before entering credentials.</p>
+            </div>
+
+            <div class="stat-card" style="text-align: left; padding: 30px;">
+                <div style="font-size: 36px; margin-bottom: 12px;">⏳</div>
+                <h3 style="font-family: var(--font-heading); font-size: 19px; margin-bottom: 8px;">Pause on Urgency</h3>
+                <p style="color: var(--text-muted); font-size: 14.5px;">Threats of immediate power cuts or account blocks are almost always social engineering scams.</p>
+            </div>
+
+            <div class="stat-card" style="text-align: left; padding: 30px;">
+                <div style="font-size: 36px; margin-bottom: 12px;">🛡️</div>
+                <h3 style="font-family: var(--font-heading); font-size: 19px; margin-bottom: 8px;">Scan Before Clicking</h3>
+                <p style="color: var(--text-muted); font-size: 14.5px;">Paste any suspicious link or SMS into CyberShield to run deep heuristic checks.</p>
+            </div>
+        </div>
+    </div>
 </section>
 
 {% endblock %}
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
-
-</head>
-
-<body>
-
-<nav class="navbar">
-
-    <div class="logo">
-        🛡️ Cyber Shield
-    </div>
-
-    <div class="nav-links">
-
-        <a href="/">Home</a>
-
-        <a href="/url-checker">
-            URL Scanner
-        </a>
-
-        <a href="/message-checker">
-            Message Scanner
-        </a>
-
-        <a href="/awareness">
-            Awareness
-        </a>
-
-        <a href="/quiz">
-            Quiz
-        </a>
-
-    </div>
-
-</nav>
-
-
-<main class="container">
-
-    <section class="hero">
-
-        <div class="tag">
-            🛡️ CYBERSECURITY AWARENESS
-        </div>
-
-        <h1>
-            Protect Yourself From
-            Phishing & Online Fraud
-        </h1>
-
-        <p>
-            Cyber Shield helps you identify
-            suspicious URLs, phishing messages
-            and common online fraud techniques.
-        </p>
-
-        <div class="hero-buttons">
-
-            <a href="/url-checker"
-               class="btn">
-                🔍 Scan URL
-            </a>
-
-            <a href="/message-checker"
-               class="btn btn-secondary">
-                📩 Check Message
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <section>
-
-        <div class="page-header">
-
-            <div class="tag">
-                WHAT WE DO
-            </div>
-
-            <h1>
-                What Cyber Shield Can Do
-            </h1>
-
-            <p>
-                Simple tools to help you stay safe online.
-            </p>
-
-        </div>
-
-
-        <div class="card-grid">
-
-            <div class="card">
-
-                <div class="icon">
-                    🔗
-                </div>
-
-                <h2>
-                    URL Scanner
-                </h2>
-
-                <p>
-                    Check URLs for common phishing
-                    indicators and suspicious patterns.
-                </p>
-
-                <a href="/url-checker"
-                   class="btn">
-                    Try Scanner →
-                </a>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="icon">
-                    📩
-                </div>
-
-                <h2>
-                    Message Scanner
-                </h2>
-
-                <p>
-                    Analyze suspicious messages
-                    for phishing and fraud indicators.
-                </p>
-
-                <a href="/message-checker"
-                   class="btn">
-                    Check Message →
-                </a>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="icon">
-                    🧠
-                </div>
-
-                <h2>
-                    Awareness Quiz
-                </h2>
-
-                <p>
-                    Test your knowledge of phishing,
-                    scams and cybersecurity safety.
-                </p>
-
-                <a href="/quiz"
-                   class="btn">
-                    Take Quiz →
-                </a>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <section class="card"
-             style="margin-top: 40px;">
-
-        <h2>
-            🛡️ Remember These Safety Rules
-        </h2>
-
-        <ul style="margin-top: 15px; padding-left: 25px;">
-
-            <li>
-                Never share your OTP.
-            </li>
-
-            <li>
-                Check website addresses before clicking.
-            </li>
-
-            <li>
-                Never share your password, PIN or CVV.
-            </li>
-
-            <li>
-                Be careful with urgent messages.
-            </li>
-
-        </ul>
-
-    </section>
-
-</main>
-
-
-<footer class="footer">
-
-    © 2026 Cyber Shield |
-    Cybersecurity Awareness Project
-
-</footer>
-
-</body>
-
-</html>

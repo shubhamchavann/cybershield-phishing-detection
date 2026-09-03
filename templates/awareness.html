@@ -2,108 +2,186 @@
 
 {% block content %}
 
-<section class="scanner-page">
+<div class="container" style="padding-top: 40px; padding-bottom: 80px;">
+    
+    <div class="scanner-header-center">
+        <div class="section-tag">
+            <span>🧠</span> CYBER DEFENSE ACADEMY
+        </div>
+        <h1 class="section-title">
+            Master the Mechanics of Online Fraud
+        </h1>
+        <p class="section-subtitle" style="margin: 0 auto;">
+            Understand how digital attackers exploit cognitive biases, technical lookalikes, and urgent fear tactics so you can spot attacks before they occur.
+        </p>
+    </div>
 
-    <p class="tag">
-        🛡️ CYBERSECURITY AWARENESS
-    </p>
-
-    <h1>
-        Stay Safe From Phishing
-    </h1>
-
-    <p>
-        Learn how scammers try to steal your personal
-        and financial information.
-    </p>
-
-
-    <div class="awareness-list">
-
-        <div class="awareness-item">
-
-            🎣
-
-            <h2>
-                What is Phishing?
-            </h2>
-
-            <p>
-                Phishing is a cyber attack where criminals
-                pretend to be trusted organizations to steal
-                sensitive information.
-            </p>
-
+    <!-- 1. MAJOR ATTACK VECTORS GRID -->
+    <div class="feature-cards-grid" style="margin-top: 40px;">
+        
+        <!-- Vector 1 -->
+        <div class="feature-card">
+            <div>
+                <div class="feature-card-header">
+                    <div class="feature-icon-box">🎣</div>
+                    <span class="feature-badge">LOOKALIKE DOMAINS</span>
+                </div>
+                <h3>Typosquatting & Domain Spoofing</h3>
+                <p>
+                    Scammers register domains that closely resemble genuine brands (e.g. <code>sbi-rewards.xyz</code> or <code>amaz0n-security.com</code>). They replicate the official login page pixel-by-pixel to intercept your credentials.
+                </p>
+            </div>
+            <div class="indicator-item warn" style="margin-top: 10px;">
+                <span>⚠️</span> <strong>Rule:</strong> Always inspect the domain suffix before typing passwords.
+            </div>
         </div>
 
-
-        <div class="awareness-item">
-
-            🔗
-
-            <h2>
-                Check Links
-            </h2>
-
-            <p>
-                Check the domain carefully before clicking
-                a link or entering your login information.
-            </p>
-
+        <!-- Vector 2 -->
+        <div class="feature-card">
+            <div>
+                <div class="feature-card-header">
+                    <div class="feature-icon-box">⚡</div>
+                    <span class="feature-badge">FEAR COERCION</span>
+                </div>
+                <h3>Electricity & Utility Bill Threats</h3>
+                <p>
+                    Attackers send mass SMS alerts warning that your power or SIM card will be cut tonight unless you call an "officer" or download a bill-updating APK that installs device screen-sharing software.
+                </p>
+            </div>
+            <div class="indicator-item risk" style="margin-top: 10px;">
+                <span>⛔</span> <strong>Rule:</strong> Utility companies never cut connections via personal phone numbers.
+            </div>
         </div>
 
-
-        <div class="awareness-item">
-
-            🔐
-
-            <h2>
-                Protect OTP
-            </h2>
-
-            <p>
-                Banks and legitimate services should never
-                require you to share your OTP, CVV or UPI PIN.
-            </p>
-
+        <!-- Vector 3 -->
+        <div class="feature-card">
+            <div>
+                <div class="feature-card-header">
+                    <div class="feature-icon-box">💸</div>
+                    <span class="feature-badge">PAYMENT TRAPS</span>
+                </div>
+                <h3>UPI & QR Code Reverse Scams</h3>
+                <p>
+                    A fraudster posing as a buyer sends a QR code or "payment link", insisting you must scan it or enter your UPI PIN to "receive payment". In reality, entering your PIN authorizes an outflow of funds.
+                </p>
+            </div>
+            <div class="indicator-item risk" style="margin-top: 10px;">
+                <span>⛔</span> <strong>Rule:</strong> You NEVER need to enter a UPI PIN to receive money.
+            </div>
         </div>
 
-
-        <div class="awareness-item">
-
-            ⚠️
-
-            <h2>
-                Beware of Urgency
-            </h2>
-
-            <p>
-                Scammers often create urgency by saying
-                your account will be blocked or an offer
-                will expire.
-            </p>
-
+        <!-- Vector 4 -->
+        <div class="feature-card">
+            <div>
+                <div class="feature-card-header">
+                    <div class="feature-icon-box">💼</div>
+                    <span class="feature-badge">TASK FRAUD</span>
+                </div>
+                <h3>Part-Time Job & Telegram Task Scams</h3>
+                <p>
+                    Victims are offered Rs. 150-300 for liking hotel reviews or YouTube videos. After small payouts gain trust, victims are coerced into paying thousands for "VIP crypto tasks" and then blocked.
+                </p>
+            </div>
+            <div class="indicator-item warn" style="margin-top: 10px;">
+                <span>⚠️</span> <strong>Rule:</strong> Any job requiring you to deposit money first is a scam.
+            </div>
         </div>
 
+        <!-- Vector 5 -->
+        <div class="feature-card">
+            <div>
+                <div class="feature-card-header">
+                    <div class="feature-icon-box">📦</div>
+                    <span class="feature-badge">MALWARE</span>
+                </div>
+                <h3>Trojan APKs & Remote Access Tools</h3>
+                <p>
+                    Malicious Android applications (.apk) disguised as banking reward portals, loan apps, or parcel tracking updates that secretly forward all incoming SMS OTPs directly to attacker command servers.
+                </p>
+            </div>
+            <div class="indicator-item risk" style="margin-top: 10px;">
+                <span>⛔</span> <strong>Rule:</strong> Only install apps from the official Google Play Store or Apple App Store.
+            </div>
+        </div>
 
-        <div class="awareness-item">
-
-            💰
-
-            <h2>
-                Job & Prize Scams
-            </h2>
-
-            <p>
-                Be careful with unexpected job offers,
-                prizes and requests for registration
-                or processing fees.
-            </p>
-
+        <!-- Vector 6 -->
+        <div class="feature-card">
+            <div>
+                <div class="feature-card-header">
+                    <div class="feature-icon-box">🎁</div>
+                    <span class="feature-badge">LURE SCAMS</span>
+                </div>
+                <h3>Lottery & Cashback Phishing</h3>
+                <p>
+                    WhatsApp forwards promising free Rs. 500 mobile recharges, KBC lotteries, or festival subsidies requiring you to forward the link to 10 contacts and enter your banking credentials.
+                </p>
+            </div>
+            <div class="indicator-item good" style="margin-top: 10px;">
+                <span>✔</span> <strong>Rule:</strong> If an offer sounds too good to be true, it is 100% fraudulent.
+            </div>
         </div>
 
     </div>
 
-</section>
+
+    <!-- 2. MYTH VS REALITY SECTION -->
+    <div class="scanner-hud-box" style="margin-top: 60px;">
+        <div class="section-tag" style="margin-bottom: 12px;">
+            <span>🛡️</span> DEBUNKING COMMON MYTHS
+        </div>
+        <h2 class="section-title" style="font-size: 28px; margin-bottom: 25px;">
+            Cybersecurity Myths vs. Facts
+        </h2>
+
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <div class="breakdown-item" style="padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <span style="color: var(--danger); font-weight: bold; font-family: var(--font-mono);">MYTH:</span>
+                    <strong style="color: var(--text-main);">"The website has a green lock icon and HTTPS, so it must be 100% safe."</strong>
+                </div>
+                <div style="color: var(--success); font-size: 14.5px; padding-left: 20px; border-left: 2px solid var(--success);">
+                    <strong>FACT:</strong> HTTPS only guarantees encryption in transit. Scammers easily get free SSL certificates for fake phishing websites.
+                </div>
+            </div>
+
+            <div class="breakdown-item" style="padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <span style="color: var(--danger); font-weight: bold; font-family: var(--font-mono);">MYTH:</span>
+                    <strong style="color: var(--text-main);">"Someone sent me money by asking me to scan their QR code."</strong>
+                </div>
+                <div style="color: var(--success); font-size: 14.5px; padding-left: 20px; border-left: 2px solid var(--success);">
+                    <strong>FACT:</strong> QR codes are exclusively designed for PAYING, not receiving. Entering your PIN on a QR prompt always sends your money away.
+                </div>
+            </div>
+
+            <div class="breakdown-item" style="padding: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <span style="color: var(--danger); font-weight: bold; font-family: var(--font-mono);">MYTH:</span>
+                    <strong style="color: var(--text-main);">"The caller knew my name and account number, so they must be from my bank."</strong>
+                </div>
+                <div style="color: var(--success); font-size: 14.5px; padding-left: 20px; border-left: 2px solid var(--success);">
+                    <strong>FACT:</strong> Attackers buy leaked databases on dark web forums and use basic personal info to establish fake credibility.
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 3. ACTION BUTTONS -->
+    <div style="text-align: center; margin-top: 50px;">
+        <h3 style="font-family: var(--font-heading); font-size: 24px; margin-bottom: 20px;">
+            Ready to test what you've learned?
+        </h3>
+        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <a href="{{ url_for('quiz') }}" class="btn">
+                <span>❓</span> Take the Cyber IQ Challenge
+            </a>
+            <a href="{{ url_for('url_checker') }}" class="btn secondary">
+                <span>🔗</span> Test with URL Scanner
+            </a>
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}
