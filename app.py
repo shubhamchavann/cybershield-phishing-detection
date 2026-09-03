@@ -7,7 +7,17 @@ from detector import scan_url, scan_message
 
 app = Flask(__name__)
 
-DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db")
+if os.environ.get("VERCEL"):
+    DATABASE = "/tmp/database.db"
+    bundled_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db")
+    if not os.path.exists(DATABASE) and os.path.exists(bundled_db):
+        import shutil
+        try:
+            shutil.copyfile(bundled_db, DATABASE)
+        except Exception:
+            pass
+else:
+    DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db")
 
 
 # --------------------------------------------------
@@ -91,6 +101,12 @@ def init_db():
 
     connection.commit()
     connection.close()
+
+
+try:
+    init_db()
+except Exception as e:
+    print(f"Database initialization note: {e}")
 
 
 # --------------------------------------------------
