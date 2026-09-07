@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- CHART.JS FOR RESPONSIVE ANALYTICS GRAPHS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <div class="container" style="max-width: 1240px; padding: 40px 20px 100px;">
     
     <!-- ADMIN HEADER & CONTROLS -->
@@ -89,8 +92,8 @@
                 <span class="chart-tag">REAL-TIME DATA</span>
             </div>
             <div class="pie-chart-container">
-                <div class="canvas-wrap">
-                    <canvas id="quizPieChart" width="260" height="260"></canvas>
+                <div class="canvas-wrap" style="position: relative; width: 220px; height: 220px;">
+                    <canvas id="quizPieChart"></canvas>
                 </div>
                 <div class="pie-legend-box">
                     <div class="legend-item">
@@ -121,7 +124,7 @@
                     <span class="chart-tag">DIAGNOSTIC</span>
                 </div>
                 <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 20px;">
-                    This overview tracks real user comprehension across 10 critical phishing attack vectors, including OTP deception, fake QR code payments, malicious APKs, urgency manipulation, and emergency cyber protocols.
+                    This telemetry engine tracks live user comprehension across 10 critical phishing attack vectors, including OTP deception, fake QR code payments, malicious APKs, urgency manipulation, and emergency cyber protocols.
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <div class="summary-metric-row">
@@ -146,7 +149,7 @@
                     <span>🛡️</span> Security Recommendation
                 </div>
                 <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">
-                    Questions with accuracy below 75% indicate prime social engineering vulnerabilities. Review the Question-wise Breakdown below for targeted training.
+                    Questions with accuracy below 75% indicate prime social engineering vulnerabilities. Review the Question-wise Bar Graphs below for targeted training.
                 </p>
             </div>
         </div>
@@ -155,7 +158,7 @@
     <!-- 3. QUESTION-WISE ANALYTICS -->
     <div class="admin-section-heading" style="margin-top: 50px;">
         <span class="heading-icon">📈</span>
-        <h2>Question-Wise Analytics &amp; Option Heatmap</h2>
+        <h2>Question-Wise Analytics &amp; Option Bar Graphs</h2>
     </div>
     <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">
         Detailed selection breakdowns and option distribution graphs showing which questions participants find most challenging.
@@ -179,25 +182,40 @@
                 <span>{{ qa.correct_text }}</span>
             </div>
 
-            <!-- OPTION BAR GRAPHS -->
-            <div class="qa-bars-list">
-                {% for opt_key, opt_text in qa.options.items() %}
-                {% set is_this_correct = (opt_key|lower == qa.correct_key|lower) %}
-                {% set count_val = qa.counts[opt_key|lower] %}
-                {% set pct_val = qa.pcts[opt_key|lower] %}
-                <div class="option-bar-row">
-                    <div class="option-bar-meta">
-                        <span class="option-pill {% if is_this_correct %}correct-pill{% endif %}">
-                            Option {{ opt_key|upper }} {% if is_this_correct %}✔{% endif %}
-                        </span>
-                        <span class="option-text-snippet">{{ opt_text }}</span>
-                        <span class="option-count-pct"><strong>{{ count_val }}</strong> users ({{ pct_val }}%)</span>
+            <!-- OPTION BAR GRAPHS & METERS -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: center; margin-top: 15px;">
+                
+                <!-- Horizontal Progress Meters -->
+                <div class="qa-bars-list">
+                    {% for opt_key, opt_text in qa.options.items() %}
+                    {% set is_this_correct = (opt_key|lower == qa.correct_key|lower) %}
+                    {% set count_val = qa.counts[opt_key|lower] %}
+                    {% set pct_val = qa.pcts[opt_key|lower] %}
+                    <div class="option-bar-row">
+                        <div class="option-bar-meta">
+                            <span class="option-pill {% if is_this_correct %}correct-pill{% endif %}">
+                                Option {{ opt_key|upper }} {% if is_this_correct %}✔ (Correct){% endif %}
+                            </span>
+                            <span class="option-count-pct"><strong>{{ count_val }}</strong> users ({{ pct_val }}%)</span>
+                        </div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin: 2px 0 4px;">{{ opt_text }}</div>
+                        <div class="option-bar-track">
+                            <div class="option-bar-fill {% if is_this_correct %}correct-fill{% else %}neutral-fill{% endif %}" style="width: {{ pct_val }}%;"></div>
+                        </div>
                     </div>
-                    <div class="option-bar-track">
-                        <div class="option-bar-fill {% if is_this_correct %}correct-fill{% else %}neutral-fill{% endif %}" style="width: {{ pct_val }}%;"></div>
+                    {% endfor %}
+                </div>
+
+                <!-- Chart.js Vertical Bar Graph for Question -->
+                <div style="background: rgba(4, 8, 18, 0.7); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                    <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
+                        Selection Distribution Bar Graph (Q{{ qa.num }})
+                    </div>
+                    <div style="height: 120px; position: relative;">
+                        <canvas id="questionBarChart{{ qa.num }}"></canvas>
                     </div>
                 </div>
-                {% endfor %}
+
             </div>
         </div>
         {% endfor %}
@@ -297,11 +315,155 @@
     </div>
 </div>
 
-<!-- DATA INJECTION FOR REAL-TIME PIE CHART -->
+<!-- DATA & AUTOMATIC CHART RENDERING ENGINE -->
 <script>
-    window.QUIZ_ANALYTICS_DATA = {
-        totalCorrect: {{ total_correct }},
-        totalIncorrect: {{ total_incorrect }}
-    };
+    document.addEventListener("DOMContentLoaded", function () {
+        const totalCorrect = {{ total_correct }};
+        const totalIncorrect = {{ total_incorrect }};
+        const total = totalCorrect + totalIncorrect;
+
+        // 1. Render Pie / Doughnut Chart
+        const pieCanvas = document.getElementById("quizPieChart");
+        if (pieCanvas) {
+            if (typeof Chart !== "undefined") {
+                new Chart(pieCanvas, {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Correct", "Incorrect"],
+                        datasets: [{
+                            data: total > 0 ? [totalCorrect, totalIncorrect] : [1, 0],
+                            backgroundColor: total > 0 ? ["#00ff9d", "#ff0055"] : ["rgba(255, 255, 255, 0.15)"],
+                            borderColor: "#050811",
+                            borderWidth: 3,
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: "68%",
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (ctx) {
+                                        if (total === 0) return " No data yet";
+                                        const count = ctx.raw;
+                                        const pct = Math.round((count / total) * 100);
+                                        return ` ${ctx.label}: ${count} (${pct}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Standalone Canvas Fallback
+                const ctx = pieCanvas.getContext("2d");
+                const cx = pieCanvas.width / 2;
+                const cy = pieCanvas.height / 2;
+                const r = 90;
+                const ir = 55;
+
+                ctx.clearRect(0, 0, pieCanvas.width, pieCanvas.height);
+                if (total === 0) {
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+                    ctx.fill();
+                } else {
+                    const cAngle = (totalCorrect / total) * (Math.PI * 2);
+                    const sAngle = -Math.PI / 2;
+
+                    // Green
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, sAngle, sAngle + cAngle);
+                    ctx.arc(cx, cy, ir, sAngle + cAngle, sAngle, true);
+                    ctx.closePath();
+                    ctx.fillStyle = "#00ff9d";
+                    ctx.fill();
+
+                    // Red
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, sAngle + cAngle, sAngle + Math.PI * 2);
+                    ctx.arc(cx, cy, ir, sAngle + Math.PI * 2, sAngle + cAngle, true);
+                    ctx.closePath();
+                    ctx.fillStyle = "#ff0055";
+                    ctx.fill();
+                }
+            }
+        }
+
+        // 2. Render Question-wise Bar Graphs
+        const questionData = [
+            {% for qa in question_analytics %}
+            {
+                num: {{ qa.num }},
+                correctKey: "{{ qa.correct_key }}",
+                labels: ["Opt A", "Opt B", "Opt C"],
+                counts: [{{ qa.counts['a'] }}, {{ qa.counts['b'] }}, {{ qa.counts['c'] }}],
+                isCorrectList: [
+                    {{ 'true' if qa.correct_key == 'A' else 'false' }},
+                    {{ 'true' if qa.correct_key == 'B' else 'false' }},
+                    {{ 'true' if qa.correct_key == 'C' else 'false' }}
+                ]
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        if (typeof Chart !== "undefined") {
+            questionData.forEach(q => {
+                const barCanvas = document.getElementById(`questionBarChart${q.num}`);
+                if (barCanvas) {
+                    const bgColors = q.isCorrectList.map(isC => isC ? "#00ff9d" : "rgba(0, 240, 255, 0.45)");
+                    const borderColors = q.isCorrectList.map(isC => isC ? "#00ff9d" : "#00f0ff");
+
+                    new Chart(barCanvas, {
+                        type: "bar",
+                        data: {
+                            labels: q.labels,
+                            datasets: [{
+                                label: "Selections",
+                                data: q.counts,
+                                backgroundColor: bgColors,
+                                borderColor: borderColors,
+                                borderWidth: 1,
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        title: function (items) {
+                                            return `Question ${q.num} - ${items[0].label}`;
+                                        },
+                                        label: function (ctx) {
+                                            const isC = q.isCorrectList[ctx.dataIndex];
+                                            return ` ${ctx.raw} users ${isC ? '(Correct)' : ''}`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: "#8b9bb4", font: { family: "'JetBrains Mono', monospace", size: 10 } }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: "rgba(255, 255, 255, 0.05)" },
+                                    ticks: { color: "#8b9bb4", stepSize: 1, font: { family: "'JetBrains Mono', monospace", size: 9 } }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    });
 </script>
 {% endblock %}
