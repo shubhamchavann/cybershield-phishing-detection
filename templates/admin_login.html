@@ -1,73 +1,149 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container" style="max-width: 520px; padding: 60px 20px 100px;">
-    <div class="scanner-card" style="box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 240, 255, 0.2);">
+<div class="container" style="max-width: 500px; padding: 50px 20px 90px;">
+    <div class="scanner-card" style="box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 240, 255, 0.2); border-radius: var(--radius-lg); padding: 35px 30px;">
         
+        <!-- Header -->
         <div class="scanner-header-center" style="margin-bottom: 25px;">
-            <div class="badge-trophy-icon" style="font-size: 50px; margin-bottom: 10px;">
+            <div class="badge-trophy-icon" style="font-size: 46px; margin-bottom: 8px;">
                 🔐
             </div>
-            <div class="section-tag" style="margin-bottom: 10px;">
+            <div class="section-tag" style="margin-bottom: 8px;">
                 RESTRICTED COMMAND INTERFACE
             </div>
-            <h1 class="section-title" style="font-size: 26px;">
+            <h1 class="section-title" style="font-size: 26px; margin-bottom: 8px;">
                 Admin Portal Login
             </h1>
-            <p class="section-subtitle" style="font-size: 14px;">
-                Enter administrator credentials to access Quiz Analytics and Threat Defense telemetry.
+            <p class="section-subtitle" style="font-size: 13.5px; margin: 0 auto; color: var(--text-muted);">
+                Authenticate with administrator credentials to access live Quiz Analytics and threat telemetry.
             </p>
         </div>
 
+        <!-- Default Credentials Callout Box -->
+        <div class="admin-cred-hint-box">
+            <div class="admin-cred-hint-header">
+                <div class="admin-cred-title">
+                    <span>⚡</span> SYSTEM ADMIN CREDENTIALS
+                </div>
+                <span style="font-size: 11px; color: var(--primary); font-family: var(--font-mono); background: rgba(0, 240, 255, 0.1); padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(0, 240, 255, 0.3);">
+                    DEFAULT
+                </span>
+            </div>
+            
+            <div class="admin-cred-pills">
+                <div class="cred-pill">
+                    <span class="cred-pill-label">Username</span>
+                    <span class="cred-pill-val" id="disp-cred-user">admin</span>
+                </div>
+                <div class="cred-pill">
+                    <span class="cred-pill-label">Password</span>
+                    <span class="cred-pill-val" id="disp-cred-pass">admin123</span>
+                </div>
+            </div>
+
+            <button type="button" class="btn-autofill" id="btnAutofillAdmin">
+                <span>⚡ Autofill Credentials</span>
+            </button>
+        </div>
+
+        <!-- Error Feedback Alert -->
         {% if error %}
-        <div style="background: rgba(255, 0, 85, 0.15); border: 1px solid var(--danger); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; color: #ffffff; font-size: 14px; display: flex; align-items: center; gap: 10px;">
+        <div style="background: rgba(255, 0, 85, 0.15); border: 1px solid var(--danger); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 20px; color: #ffffff; font-size: 13.5px; display: flex; align-items: center; gap: 10px; box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);">
             <span style="font-size: 18px;">⚠️</span>
-            <span>{{ error }}</span>
+            <span style="font-family: var(--font-mono);">{{ error }}</span>
         </div>
         {% endif %}
 
-        <form method="POST" action="{{ url_for('admin_login') }}" style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- Login Form -->
+        <form method="POST" action="{{ url_for('admin_login') }}" style="display: flex; flex-direction: column; gap: 18px;">
             
             <div class="form-group">
-                <label for="username" style="display: block; font-family: var(--font-mono); font-size: 13px; color: var(--primary); margin-bottom: 8px;">
-                    ADMIN USERNAME <span style="color: var(--danger);">*</span>
+                <label for="username" class="form-label">
+                    <span>ADMIN USERNAME <span style="color: var(--danger);">*</span></span>
+                    <span style="color: var(--text-muted); font-size: 11px;">[Default: admin]</span>
                 </label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    class="form-input cyber-input" 
-                    placeholder="Enter admin username" 
-                    value="admin"
-                    required
-                    autocomplete="username"
-                >
+                <div class="input-with-icon">
+                    <span class="input-icon-prefix">👤</span>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input cyber-input has-prefix" 
+                        placeholder="Enter admin username" 
+                        value="admin"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="password" style="display: block; font-family: var(--font-mono); font-size: 13px; color: var(--primary); margin-bottom: 8px;">
-                    SECURITY PASSPHRASE <span style="color: var(--danger);">*</span>
+                <label for="password" class="form-label">
+                    <span>SECURITY PASSPHRASE <span style="color: var(--danger);">*</span></span>
+                    <span style="color: var(--text-muted); font-size: 11px;">[Default: admin123]</span>
                 </label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    class="form-input cyber-input" 
-                    placeholder="Enter administrator password" 
-                    required
-                    autocomplete="current-password"
-                >
+                <div class="input-with-icon">
+                    <span class="input-icon-prefix">🔒</span>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input cyber-input has-prefix has-suffix" 
+                        placeholder="Enter administrator password" 
+                        value="admin123"
+                        required
+                        autocomplete="current-password"
+                    >
+                    <button type="button" class="input-toggle-btn" id="btnTogglePass" title="Show/Hide Password">
+                        👁️
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" class="btn" style="width: 100%; margin-top: 10px; font-size: 16px;">
+            <button type="submit" class="btn" style="width: 100%; margin-top: 10px; font-size: 15.5px; padding: 14px;">
                 <span>🔐 Authenticate &amp; Access Analytics</span>
             </button>
         </form>
 
-        <div style="text-align: center; margin-top: 25px; font-size: 13px; color: var(--text-muted); font-family: var(--font-mono);">
+        <div style="text-align: center; margin-top: 25px; font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); border-top: 1px solid var(--border-subtle); padding-top: 16px;">
             <span>🛡️ CyberShield Multi-Factor Defense &bull; Authorized Personnel Only</span>
         </div>
 
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const btnAutofill = document.getElementById("btnAutofillAdmin");
+        const btnTogglePass = document.getElementById("btnTogglePass");
+
+        // Autofill Demo Credentials
+        if (btnAutofill) {
+            btnAutofill.addEventListener("click", function () {
+                if (usernameInput) usernameInput.value = "admin";
+                if (passwordInput) passwordInput.value = "admin123";
+                btnAutofill.innerHTML = "<span>✔ Credentials Applied!</span>";
+                setTimeout(() => {
+                    btnAutofill.innerHTML = "<span>⚡ Autofill Credentials</span>";
+                }, 1500);
+            });
+        }
+
+        // Toggle Password Visibility
+        if (btnTogglePass && passwordInput) {
+            btnTogglePass.addEventListener("click", function () {
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    btnTogglePass.textContent = "🙈";
+                } else {
+                    passwordInput.type = "password";
+                    btnTogglePass.textContent = "👁️";
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

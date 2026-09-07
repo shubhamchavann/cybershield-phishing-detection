@@ -2453,3 +2453,179 @@ main {
     font-size: 14px;
     margin-bottom: 4px;
 }
+
+/* ==================================================
+   GLOBAL FORM INPUTS & CYBER CONTROLS
+   ================================================== */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.5px;
+}
+
+.form-input, .cyber-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(10, 18, 36, 0.85);
+    border: 1.5px solid rgba(0, 240, 255, 0.3);
+    border-radius: var(--radius-md);
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 15px;
+    padding: 14px 18px;
+    outline: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.form-input::placeholder, .cyber-input::placeholder {
+    color: rgba(139, 155, 180, 0.6);
+    font-size: 14px;
+}
+
+.form-input:focus, .cyber-input:focus {
+    border-color: var(--primary);
+    background: rgba(14, 25, 50, 0.95);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.35), inset 0 0 12px rgba(0, 240, 255, 0.15);
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-with-icon .input-icon-prefix {
+    position: absolute;
+    left: 16px;
+    font-size: 17px;
+    pointer-events: none;
+    z-index: 2;
+    filter: drop-shadow(0 0 6px var(--primary-glow));
+}
+
+.input-with-icon input.has-prefix {
+    padding-left: 48px;
+}
+
+.input-with-icon input.has-suffix {
+    padding-right: 48px;
+}
+
+.input-toggle-btn {
+    position: absolute;
+    right: 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 3;
+}
+
+.input-toggle-btn:hover {
+    color: var(--primary);
+    transform: scale(1.1);
+}
+
+/* Cyber Credentials Box */
+.admin-cred-hint-box {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(138, 43, 226, 0.12));
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.08);
+}
+
+.admin-cred-hint-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.admin-cred-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.5px;
+}
+
+.admin-cred-pills {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.cred-pill {
+    background: rgba(4, 8, 20, 0.8);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cred-pill-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.cred-pill-val {
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #00ff9d;
+}
+
+.btn-autofill {
+    width: 100%;
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px dashed var(--primary);
+    color: var(--primary);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-autofill:hover {
+    background: rgba(0, 240, 255, 0.25);
+    border-style: solid;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    color: #ffffff;
+}

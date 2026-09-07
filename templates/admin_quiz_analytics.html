@@ -463,6 +463,45 @@
                     });
                 }
             });
+        } else {
+            // Standalone Direct 2D Canvas Fallback
+            questionData.forEach(q => {
+                const barCanvas = document.getElementById(`questionBarChart${q.num}`);
+                if (barCanvas) {
+                    const ctx = barCanvas.getContext("2d");
+                    const w = barCanvas.width = barCanvas.parentElement.clientWidth || 220;
+                    const h = barCanvas.height = 120;
+                    ctx.clearRect(0, 0, w, h);
+
+                    const maxVal = Math.max(...q.counts, 1);
+                    const barW = Math.min(36, (w - 60) / 3);
+                    const gap = (w - (barW * 3)) / 4;
+
+                    q.counts.forEach((val, idx) => {
+                        const barH = Math.max(4, (val / maxVal) * (h - 45));
+                        const x = gap + idx * (barW + gap);
+                        const y = h - 25 - barH;
+                        const isC = q.isCorrectList[idx];
+
+                        // Bar
+                        ctx.fillStyle = isC ? "#00ff9d" : "rgba(0, 240, 255, 0.45)";
+                        ctx.fillRect(x, y, barW, barH);
+                        ctx.strokeStyle = isC ? "#00ff9d" : "#00f0ff";
+                        ctx.strokeRect(x, y, barW, barH);
+
+                        // Label
+                        ctx.fillStyle = "#8b9bb4";
+                        ctx.font = "10px monospace";
+                        ctx.textAlign = "center";
+                        ctx.fillText(q.labels[idx], x + (barW / 2), h - 8);
+
+                        // Value
+                        ctx.fillStyle = "#ffffff";
+                        ctx.font = "bold 10px monospace";
+                        ctx.fillText(val, x + (barW / 2), y - 4);
+                    });
+                }
+            });
         }
     });
 </script>
