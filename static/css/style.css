@@ -2373,48 +2373,48 @@ main {
 
 /* View Details Modal */
 .admin-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(2, 5, 12, 0.9);
-    z-index: 999999 !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 30px 20px;
-    box-sizing: border-box;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(2, 5, 12, 0.92) !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 35px 20px !important;
+    box-sizing: border-box !important;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition: opacity 0.25s ease, visibility 0.25s ease;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 .admin-modal-overlay.open {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
 }
 
 .admin-modal-box {
-    background: #080e1c;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    width: 100%;
-    max-width: 820px;
-    max-height: calc(100vh - 60px);
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 240, 255, 0.25);
-    overflow: hidden;
-    position: relative;
-    z-index: 1000000 !important;
+    background: #080e1c !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-lg) !important;
+    width: 100% !important;
+    max-width: 820px !important;
+    max-height: 85vh !important;
+    margin: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(0, 240, 255, 0.3) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    z-index: 2147483647 !important;
     animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

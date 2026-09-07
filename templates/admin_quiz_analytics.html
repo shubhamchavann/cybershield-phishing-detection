@@ -284,8 +284,10 @@
     </div>
 
 </div>
+{% endblock %}
 
-<!-- 5. VIEW DETAILS MODAL -->
+{% block modal_slot %}
+<!-- 5. VIEW DETAILS MODAL (DIRECT ROOT BODY LEVEL FOR MAXIMUM Z-INDEX) -->
 <div class="admin-modal-overlay" id="quizDetailsModal" role="dialog" aria-modal="true" aria-labelledby="modalDetailTitle">
     <div class="admin-modal-box">
         <div class="modal-header-cyber">

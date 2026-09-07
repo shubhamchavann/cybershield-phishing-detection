@@ -240,41 +240,82 @@ def init_db():
     # Seed realistic initial quiz attempts if quiz_attempts table is empty
     cursor = connection.execute("SELECT COUNT(*) as count FROM quiz_attempts")
     quiz_count_row = cursor.fetchone()
-    if quiz_count_row and quiz_count_row["count"] == 0:
-        sample_participants = [
-            ("Shubham Chavan", 9, 9, 1, 90.0, "2026-09-07 19:40:15"),
-            ("Aarav Sharma", 8, 8, 2, 80.0, "2026-09-07 18:22:04"),
-            ("Priya Patel", 10, 10, 0, 100.0, "2026-09-07 16:15:30"),
-            ("Rahul Deshmukh", 7, 7, 3, 70.0, "2026-09-06 21:05:12"),
-            ("Ananya Verma", 8, 8, 2, 80.0, "2026-09-06 14:30:45")
-        ]
+    
+    # Accurate seed profiles: (name, wrong_options_map, timestamp)
+    seed_profiles = [
+        ("Shubham Chavan", {6: "b"}, "2026-09-07 19:40:15"),           # 9/10 (90%) - 1 wrong: Q6
+        ("Aarav Sharma", {2: "a", 7: "a"}, "2026-09-07 18:22:04"),    # 8/10 (80%) - 2 wrong: Q2, Q7
+        ("Priya Patel", {}, "2026-09-07 16:15:30"),                    # 10/10 (100%) - 0 wrong
+        ("Rahul Deshmukh", {2: "a", 6: "b", 9: "b"}, "2026-09-06 21:05:12"), # 7/10 (70%) - 3 wrong: Q2, Q6, Q9
+        ("Ananya Verma", {3: "b", 8: "a"}, "2026-09-06 14:30:45")     # 8/10 (80%) - 2 wrong: Q3, Q8
+    ]
 
-        for p_name, p_score, p_corr, p_incorr, p_pct, p_time in sample_participants:
-            sample_answers = []
-            for q in QUIZ_QUESTIONS:
-                # Slight variation for sample incorrect answers
-                if p_score < 10 and q["num"] in [2, 7, 10] and len(sample_answers) < (10 - p_score):
-                    sel = "a" if q["answer"] != "a" else "c"
-                    is_c = False
-                else:
-                    sel = q["answer"]
-                    is_c = True
+    def build_attempt_payload(wrong_map):
+        answers = []
+        corr = 0
+        incorr = 0
+        for q in QUIZ_QUESTIONS:
+            qnum = q["num"]
+            qid = q["id"]
+            correct_key = q["answer"].lower()
+            if qnum in wrong_map:
+                sel_key = wrong_map[qnum].lower()
+                is_c = False
+                incorr += 1
+            else:
+                sel_key = correct_key
+                is_c = True
+                corr += 1
+            answers.append({
+                "num": qnum,
+                "id": qid,
+                "question": q["question"],
+                "selected_key": sel_key.upper(),
+                "selected_text": q["options"].get(sel_key, ""),
+                "correct_key": correct_key.upper(),
+                "correct_text": q["options"].get(correct_key, ""),
+                "is_correct": is_c
+            })
+        return answers, corr, incorr
 
-                sample_answers.append({
-                    "num": q["num"],
-                    "id": q["id"],
-                    "question": q["question"],
-                    "selected_key": sel.upper(),
-                    "selected_text": q["options"].get(sel, ""),
-                    "correct_key": q["answer"].upper(),
-                    "correct_text": q["options"].get(q["answer"], ""),
-                    "is_correct": is_c
-                })
-
+    if not quiz_count_row or quiz_count_row["count"] == 0:
+        for p_name, wrong_map, p_time in seed_profiles:
+            answers, corr, incorr = build_attempt_payload(wrong_map)
+            pct = round((corr / 10.0) * 100, 1)
             connection.execute("""
                 INSERT INTO quiz_attempts (user_name, score, total_questions, correct_count, incorrect_count, percentage, answers_json, completed_at)
                 VALUES (?, ?, 10, ?, ?, ?, ?, ?)
-            """, (p_name, p_score, p_corr, p_incorr, p_pct, json.dumps(sample_answers), p_time))
+            """, (p_name, corr, corr, incorr, pct, json.dumps(answers), p_time))
+    else:
+        # Check and repair any existing attempt records that have mismatched telemetry
+        cur = connection.execute("SELECT id, user_name, answers_json FROM quiz_attempts")
+        existing_rows = cur.fetchall()
+        for erow in existing_rows:
+            uname = erow["user_name"]
+            # If it's one of the seed profiles, ensure its answers_json is strictly accurate
+            match_seed = next((sp for sp in seed_profiles if sp[0].lower() == uname.lower()), None)
+            if match_seed:
+                answers, corr, incorr = build_attempt_payload(match_seed[1])
+                pct = round((corr / 10.0) * 100, 1)
+                connection.execute("""
+                    UPDATE quiz_attempts 
+                    SET score = ?, correct_count = ?, incorrect_count = ?, percentage = ?, answers_json = ?
+                    WHERE id = ?
+                """, (corr, corr, incorr, pct, json.dumps(answers), erow["id"]))
+            elif erow["answers_json"]:
+                try:
+                    ans_list = json.loads(erow["answers_json"])
+                    calc_corr = sum(1 for a in ans_list if a.get("is_correct"))
+                    calc_total = len(ans_list) or 10
+                    calc_incorr = calc_total - calc_corr
+                    calc_pct = round((calc_corr / calc_total) * 100, 1)
+                    connection.execute("""
+                        UPDATE quiz_attempts 
+                        SET score = ?, correct_count = ?, incorrect_count = ?, percentage = ?, total_questions = ?
+                        WHERE id = ?
+                    """, (calc_corr, calc_corr, calc_incorr, calc_pct, calc_total, erow["id"]))
+                except Exception:
+                    pass
 
     connection.commit()
     connection.close()
