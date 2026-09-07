@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 1240px; padding: 40px 20px 100px;">
+    
+    <!-- ADMIN HEADER & CONTROLS -->
+    <div class="admin-header-bar">
+        <div>
+            <div class="section-tag" style="margin-bottom: 8px;">
+                <span>🛡️</span> RESTRICTED ADMIN PORTAL
+            </div>
+            <h1 class="section-title" style="font-size: 32px; text-align: left; margin: 0;">
+                Quiz Analytics &amp; Threat Intelligence
+            </h1>
+            <p class="section-subtitle" style="text-align: left; margin-top: 5px; font-size: 15px;">
+                Comprehensive evaluation analytics, question vulnerability heatmaps, and individual user results.
+            </p>
+        </div>
+
+        <div class="admin-actions-wrap">
+            <div class="nav-status-badge" style="background: rgba(0, 255, 157, 0.1); border-color: var(--success); color: var(--success);">
+                <div class="beacon-dot" style="background: var(--success);"></div>
+                <span>ADMIN ONLINE</span>
+            </div>
+            <a href="{{ url_for('admin_logout') }}" class="btn" style="background: rgba(255, 0, 85, 0.15); border: 1px solid var(--danger); color: #ff6b8b; padding: 10px 20px; font-size: 14px;">
+                <span>🔒 Sign Out</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 1. OVERALL STATISTICS CARDS -->
+    <div class="admin-section-heading">
+        <span class="heading-icon">📊</span>
+        <h2>Overall Quiz Performance Statistics</h2>
+    </div>
+
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <div class="stat-card-header">
+                <span class="stat-label">TOTAL PARTICIPANTS</span>
+                <span class="stat-icon">👥</span>
+            </div>
+            <div class="stat-main-val">{{ total_participants }}</div>
+            <div class="stat-sub-text">Unique registered learners</div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="stat-card-header">
+                <span class="stat-label">TOTAL ATTEMPTS</span>
+                <span class="stat-icon">📝</span>
+            </div>
+            <div class="stat-main-val" style="color: var(--primary);">{{ total_attempts }}</div>
+            <div class="stat-sub-text">Total assessments submitted</div>
+        </div>
+
+        <div class="admin-stat-card" style="border-color: rgba(0, 255, 157, 0.3);">
+            <div class="stat-card-header">
+                <span class="stat-label">CORRECT ANSWERS</span>
+                <span class="stat-icon">✔</span>
+            </div>
+            <div class="stat-main-val" style="color: var(--success);">{{ total_correct }}</div>
+            <div class="stat-sub-text">Across all completed questions</div>
+        </div>
+
+        <div class="admin-stat-card" style="border-color: rgba(255, 0, 85, 0.3);">
+            <div class="stat-card-header">
+                <span class="stat-label">INCORRECT ANSWERS</span>
+                <span class="stat-icon">✖</span>
+            </div>
+            <div class="stat-main-val" style="color: var(--danger);">{{ total_incorrect }}</div>
+            <div class="stat-sub-text">Identified knowledge gaps</div>
+        </div>
+
+        <div class="admin-stat-card" style="border-color: rgba(168, 85, 247, 0.4);">
+            <div class="stat-card-header">
+                <span class="stat-label">AVERAGE QUIZ SCORE</span>
+                <span class="stat-icon">🎯</span>
+            </div>
+            <div class="stat-main-val" style="color: #c084fc;">{{ avg_score }} <span style="font-size: 20px; color: var(--text-muted);">/ 10</span></div>
+            <div class="stat-sub-text">Average Accuracy: <strong>{{ avg_percentage }}%</strong></div>
+        </div>
+    </div>
+
+    <!-- 2. CIRCLE / PIE CHART & AGGREGATE DISTRIBUTION -->
+    <div class="admin-charts-grid" style="margin-top: 40px;">
+        <div class="admin-chart-card">
+            <div class="chart-card-header">
+                <h3>Overall Accuracy Distribution (Pie Chart)</h3>
+                <span class="chart-tag">REAL-TIME DATA</span>
+            </div>
+            <div class="pie-chart-container">
+                <div class="canvas-wrap">
+                    <canvas id="quizPieChart" width="260" height="260"></canvas>
+                </div>
+                <div class="pie-legend-box">
+                    <div class="legend-item">
+                        <div class="legend-color-dot" style="background: var(--success); box-shadow: 0 0 10px var(--success);"></div>
+                        <div>
+                            <div class="legend-title">Correct Answers</div>
+                            <div class="legend-value" style="color: var(--success);">{{ total_correct }} answers ({% if (total_correct + total_incorrect) > 0 %}{{ ((total_correct / (total_correct + total_incorrect)) * 100) | round(1) }}%{% else %}0%{% endif %})</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color-dot" style="background: var(--danger); box-shadow: 0 0 10px var(--danger);"></div>
+                        <div>
+                            <div class="legend-title">Incorrect Answers</div>
+                            <div class="legend-value" style="color: var(--danger);">{{ total_incorrect }} answers ({% if (total_correct + total_incorrect) > 0 %}{{ ((total_incorrect / (total_correct + total_incorrect)) * 100) | round(1) }}%{% else %}0%{% endif %})</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-muted); font-family: var(--font-mono); margin-top: 15px; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+                        Total Responses Evaluated: <strong>{{ total_correct + total_incorrect }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-chart-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div class="chart-card-header">
+                    <h3>Threat Awareness Summary</h3>
+                    <span class="chart-tag">DIAGNOSTIC</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 20px;">
+                    This overview tracks real user comprehension across 10 critical phishing attack vectors, including OTP deception, fake QR code payments, malicious APKs, urgency manipulation, and emergency cyber protocols.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="summary-metric-row">
+                        <span>Cohort Defense Rating</span>
+                        <strong style="color: {% if avg_score >= 8 %}var(--success){% elif avg_score >= 5 %}var(--primary){% else %}var(--warning){% endif %};">
+                            {% if avg_score >= 8 %}CYBER SHIELD MASTER (HIGH RESILIENCE){% elif avg_score >= 5 %}DEFENSIVE (MODERATE RISK){% else %}ELEVATED VULNERABILITY{% endif %}
+                        </strong>
+                    </div>
+                    <div class="summary-metric-row">
+                        <span>Total Active Questions</span>
+                        <strong>10 Security Vectors</strong>
+                    </div>
+                    <div class="summary-metric-row">
+                        <span>Active Data Store</span>
+                        <strong style="color: var(--primary);">SQLite Matrix DB (Persistent)</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: rgba(0, 240, 255, 0.05); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-top: 20px;">
+                <div style="font-family: var(--font-mono); font-size: 13px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+                    <span>🛡️</span> Security Recommendation
+                </div>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">
+                    Questions with accuracy below 75% indicate prime social engineering vulnerabilities. Review the Question-wise Breakdown below for targeted training.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. QUESTION-WISE ANALYTICS -->
+    <div class="admin-section-heading" style="margin-top: 50px;">
+        <span class="heading-icon">📈</span>
+        <h2>Question-Wise Analytics &amp; Option Heatmap</h2>
+    </div>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">
+        Detailed selection breakdowns and option distribution graphs showing which questions participants find most challenging.
+    </p>
+
+    <div class="question-analytics-grid">
+        {% for qa in question_analytics %}
+        <div class="question-analytics-card">
+            <div class="qa-header">
+                <div class="qa-title-wrap">
+                    <span class="step-num">{{ qa.num }}</span>
+                    <span class="qa-question-text">{{ qa.question }}</span>
+                </div>
+                <div class="qa-accuracy-badge {% if qa.accuracy_pct >= 80 %}high{% elif qa.accuracy_pct >= 50 %}med{% else %}low{% endif %}">
+                    {{ qa.accuracy_pct }}% Correct
+                </div>
+            </div>
+
+            <div class="qa-correct-answer-banner">
+                <span style="font-weight: 700; color: var(--success);">✔ Correct Answer: Option {{ qa.correct_key }}</span> &bull; 
+                <span>{{ qa.correct_text }}</span>
+            </div>
+
+            <!-- OPTION BAR GRAPHS -->
+            <div class="qa-bars-list">
+                {% for opt_key, opt_text in qa.options.items() %}
+                {% set is_this_correct = (opt_key|lower == qa.correct_key|lower) %}
+                {% set count_val = qa.counts[opt_key|lower] %}
+                {% set pct_val = qa.pcts[opt_key|lower] %}
+                <div class="option-bar-row">
+                    <div class="option-bar-meta">
+                        <span class="option-pill {% if is_this_correct %}correct-pill{% endif %}">
+                            Option {{ opt_key|upper }} {% if is_this_correct %}✔{% endif %}
+                        </span>
+                        <span class="option-text-snippet">{{ opt_text }}</span>
+                        <span class="option-count-pct"><strong>{{ count_val }}</strong> users ({{ pct_val }}%)</span>
+                    </div>
+                    <div class="option-bar-track">
+                        <div class="option-bar-fill {% if is_this_correct %}correct-fill{% else %}neutral-fill{% endif %}" style="width: {{ pct_val }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 4. INDIVIDUAL USER RESULTS (PARTICIPANT RESULTS) -->
+    <div class="admin-section-heading" style="margin-top: 55px;">
+        <span class="heading-icon">📋</span>
+        <h2>Participant Results</h2>
+    </div>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">
+        Live log of every individual user quiz attempt with full answer inspection.
+    </p>
+
+    <div class="admin-table-wrap">
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>SCORE</th>
+                    <th>CORRECT</th>
+                    <th>INCORRECT</th>
+                    <th>COMPLETION DATE</th>
+                    <th style="text-align: right;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if attempts|length == 0 %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                        No quiz attempts recorded yet.
+                    </td>
+                </tr>
+                {% else %}
+                {% for att in attempts %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                            <span>👤</span> {{ att.user_name }}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="table-score-badge {% if att.score >= 8 %}high{% elif att.score >= 5 %}med{% else %}low{% endif %}">
+                            {{ att.score }} / 10 ({{ att.percentage }}%)
+                        </span>
+                    </td>
+                    <td>
+                        <span style="color: var(--success); font-weight: 600;">✔ {{ att.correct_count }}</span>
+                    </td>
+                    <td>
+                        <span style="color: var(--danger); font-weight: 600;">✖ {{ att.incorrect_count }}</span>
+                    </td>
+                    <td style="font-family: var(--font-mono); font-size: 13px; color: var(--text-muted);">
+                        {{ att.completed_at }}
+                    </td>
+                    <td style="text-align: right;">
+                        <button type="button" class="btn secondary btn-view-details" data-attempt-id="{{ att.id }}" style="padding: 6px 14px; font-size: 13px;">
+                            <span>🔍 View Details</span>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- 5. VIEW DETAILS MODAL -->
+<div class="admin-modal-overlay" id="quizDetailsModal" role="dialog" aria-modal="true" aria-labelledby="modalDetailTitle">
+    <div class="admin-modal-box">
+        <div class="modal-header-cyber">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 24px;">🛡️</span>
+                <div>
+                    <h3 id="modalDetailTitle" style="font-size: 20px; color: #ffffff; margin: 0;">Participant Quiz Answers</h3>
+                    <div id="modalDetailSubtitle" style="font-size: 13px; color: var(--primary); font-family: var(--font-mono); margin-top: 2px;">Loading Telemetry...</div>
+                </div>
+            </div>
+            <button type="button" class="btn-close-modal" id="modalDetailCloseBtn" aria-label="Close modal">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-body-cyber" id="modalDetailBody">
+            <!-- Details loaded dynamically via JavaScript -->
+        </div>
+
+        <div class="modal-footer-cyber">
+            <button type="button" class="btn secondary" id="modalDetailFooterCloseBtn" style="padding: 8px 20px; font-size: 14px;">
+                Close Breakdown
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- DATA INJECTION FOR REAL-TIME PIE CHART -->
+<script>
+    window.QUIZ_ANALYTICS_DATA = {
+        totalCorrect: {{ total_correct }},
+        totalIncorrect: {{ total_incorrect }}
+    };
+</script>
+{% endblock %}

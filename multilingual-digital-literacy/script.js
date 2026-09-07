@@ -4,6 +4,8 @@ let completedTopics = [];
 let quizActive = false;
 let quizCurrentIndex = 0;
 let quizUserAnswers = Array(15).fill(null);
+let lastQuizScore = 12;
+let lastQuizTotal = 15;
 let activeTopicId = null;
 let activeTopicType = null;
 let modalOpen = false;
@@ -63,6 +65,24 @@ const modalBody = document.getElementById('modalBody');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
 const modalCloseActionBtn = document.getElementById('modalCloseActionBtn');
 const modalMarkCompleteBtn = document.getElementById('modalMarkCompleteBtn');
+const btnSpeakTopic = document.getElementById('btnSpeakTopic');
+const voiceBtnText = document.getElementById('voiceBtnText');
+
+// Certificate Modal Elements
+const certModal = document.getElementById('certModal');
+const btnOpenCertModal = document.getElementById('btnOpenCertModal');
+const certModalCloseBtn = document.getElementById('certModalCloseBtn');
+const certCloseActionBtn = document.getElementById('certCloseActionBtn');
+const certStudentName = document.getElementById('certStudentName');
+const btnGenerateCert = document.getElementById('btnGenerateCert');
+const certPreviewSection = document.getElementById('certPreviewSection');
+const certModalFooter = document.getElementById('certModalFooter');
+const certNameDisplay = document.getElementById('certNameDisplay');
+const certScoreDisplay = document.getElementById('certScoreDisplay');
+const certDateDisplay = document.getElementById('certDateDisplay');
+const certIdDisplay = document.getElementById('certIdDisplay');
+const btnPrintCert = document.getElementById('btnPrintCert');
+const certBtnText = document.getElementById('certBtnText');
 
 // ----------------------------------------------------
 // 1. INITIALIZATION & LOCAL STORAGE
@@ -95,6 +115,19 @@ document.addEventListener('DOMContentLoaded', () => {
   changeLanguage(savedLang);
 
   setupEventListeners();
+
+  // Register PWA Service Worker for offline capability
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => {
+          console.log('Digital Literacy ServiceWorker registered:', reg.scope);
+        })
+        .catch(err => {
+          console.log('ServiceWorker registration skipped:', err);
+        });
+    });
+  }
 });
 
 // Setup Event Listeners
@@ -190,6 +223,37 @@ function setupEventListeners() {
   btnQuizPrev.addEventListener('click', prevQuizQuestion);
   btnQuizNext.addEventListener('click', nextQuizQuestion);
   btnRestartQuiz.addEventListener('click', startQuiz);
+
+  // Voice Assistance (Text to Speech)
+  if (btnSpeakTopic) {
+    btnSpeakTopic.addEventListener('click', toggleSpeech);
+  }
+
+  // Certificate Modal Handlers
+  if (btnOpenCertModal) {
+    btnOpenCertModal.addEventListener('click', openCertModal);
+  }
+  if (certModalCloseBtn) {
+    certModalCloseBtn.addEventListener('click', closeCertModal);
+  }
+  if (certCloseActionBtn) {
+    certCloseActionBtn.addEventListener('click', closeCertModal);
+  }
+  if (certModal) {
+    certModal.addEventListener('click', (e) => {
+      if (e.target === certModal) {
+        closeCertModal();
+      }
+    });
+  }
+  if (btnGenerateCert) {
+    btnGenerateCert.addEventListener('click', generateCertificateAction);
+  }
+  if (btnPrintCert) {
+    btnPrintCert.addEventListener('click', () => {
+      window.print();
+    });
+  }
 }
 
 // ----------------------------------------------------
@@ -234,6 +298,24 @@ function changeLanguage(lang) {
       el.setAttribute('placeholder', translation);
     }
   });
+
+  // Update dynamic buttons
+  const voiceDict = {
+    en: { listen: "Listen", stop: "Stop" },
+    hi: { listen: "सुनें", stop: "रोकें" },
+    mr: { listen: "ऐका", stop: "थांबवा" }
+  };
+  if (voiceBtnText && (!window.speechSynthesis || !window.speechSynthesis.speaking)) {
+    voiceBtnText.innerText = voiceDict[lang]?.listen || 'Listen';
+  }
+  if (certBtnText) {
+    const certLabels = {
+      en: "Get Certificate of Completion",
+      hi: "प्रमाणपत्र प्राप्त करें",
+      mr: "प्रमाणपत्र मिळवा"
+    };
+    certBtnText.innerText = certLabels[lang] || 'Get Certificate of Completion';
+  }
 
   // Render list data that needs language translations
   renderTips();
@@ -431,6 +513,12 @@ function openModal(topicId, type) {
 }
 
 function closeModal() {
+  // Cancel speech synthesis if speaking
+  if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
+  updateVoiceButtonState(false);
+
   detailsModal.classList.remove('open');
   document.body.style.overflow = '';
   modalOpen = false;
@@ -786,6 +874,10 @@ function submitQuiz() {
     }
   });
 
+  // Store for certificate generation
+  lastQuizScore = correctCount;
+  lastQuizTotal = 15;
+
   // Setup result texts and styles based on final score
   const scoreDisplay = document.getElementById('quizScoreValue');
   const resultMsg = document.getElementById('quizResultMessage');
@@ -844,4 +936,138 @@ function submitQuiz() {
   quizResultsPanel.style.display = 'block';
   // Scroll quiz panel header into viewport view smoothly
   document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ----------------------------------------------------
+// 10. VOICE ASSISTANCE (TEXT-TO-SPEECH)
+// ----------------------------------------------------
+
+function updateVoiceButtonState(isSpeaking) {
+  if (!btnSpeakTopic || !voiceBtnText) return;
+  const voiceDict = {
+    en: { listen: "Listen", stop: "Stop" },
+    hi: { listen: "सुनें", stop: "रोकें" },
+    mr: { listen: "ऐका", stop: "थांबवा" }
+  };
+  if (isSpeaking) {
+    btnSpeakTopic.classList.add('speaking');
+    voiceBtnText.innerText = voiceDict[currentLanguage]?.stop || 'Stop';
+  } else {
+    btnSpeakTopic.classList.remove('speaking');
+    voiceBtnText.innerText = voiceDict[currentLanguage]?.listen || 'Listen';
+  }
+}
+
+function toggleSpeech() {
+  if (!('speechSynthesis' in window)) {
+    alert(currentLanguage === 'hi' ? 'आपके ब्राउज़र में वॉइस असिस्टेंट समर्थित नहीं है।' :
+          currentLanguage === 'mr' ? 'तुमच्या ब्राउझरमध्ये व्हॉइस असिस्टंट समर्थित नाही.' :
+          'Text-to-speech is not supported in your browser.');
+    return;
+  }
+
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    updateVoiceButtonState(false);
+    return;
+  }
+
+  const titleText = modalTitle ? modalTitle.innerText : '';
+  const bodyText = modalBody ? modalBody.innerText : '';
+  const fullText = `${titleText}. ${bodyText}`.replace(/\s+/g, ' ').trim();
+
+  if (!fullText) return;
+
+  const utterance = new SpeechSynthesisUtterance(fullText);
+  const langCode = currentLanguage === 'hi' ? 'hi-IN' : currentLanguage === 'mr' ? 'mr-IN' : 'en-US';
+  utterance.lang = langCode;
+  utterance.rate = 0.92;
+
+  // Pick matching speech synthesis voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const matchingVoice = voices.find(v => v.lang === langCode || v.lang.startsWith(currentLanguage));
+  if (matchingVoice) {
+    utterance.voice = matchingVoice;
+  }
+
+  utterance.onstart = () => updateVoiceButtonState(true);
+  utterance.onend = () => updateVoiceButtonState(false);
+  utterance.onerror = () => updateVoiceButtonState(false);
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// ----------------------------------------------------
+// 11. CERTIFICATE OF COMPLETION GENERATION & PRINT
+// ----------------------------------------------------
+
+function openCertModal() {
+  if (!certModal) return;
+  certModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Automatically trigger certificate generation if name is already present
+  if (certStudentName && certStudentName.value.trim()) {
+    generateCertificateAction();
+  } else if (certStudentName) {
+    certStudentName.focus();
+  }
+}
+
+function closeCertModal() {
+  if (!certModal) return;
+  certModal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function generateCertificateAction() {
+  const defaultNames = {
+    en: 'Digital Learner',
+    hi: 'डिजिटल शिक्षार्थी',
+    mr: 'डिजिटल विद्यार्थी'
+  };
+  const studentName = (certStudentName && certStudentName.value.trim()) || defaultNames[currentLanguage] || 'Digital Learner';
+
+  let certData = null;
+
+  try {
+    const response = await fetch('/api/certificate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: studentName,
+        score: lastQuizScore,
+        total: lastQuizTotal,
+        lang: currentLanguage
+      })
+    });
+    if (response.ok) {
+      certData = await response.json();
+    }
+  } catch (err) {
+    // Offline mode or standalone static client
+  }
+
+  if (!certData) {
+    const percent = Math.round((lastQuizScore / lastQuizTotal) * 100);
+    const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    const certId = 'MDL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    certData = {
+      name: studentName,
+      score: lastQuizScore,
+      total: lastQuizTotal,
+      percentage: percent,
+      issued_date: dateStr,
+      certificate_id: certId
+    };
+  }
+
+  // Populate preview
+  if (certNameDisplay) certNameDisplay.innerText = certData.name;
+  if (certScoreDisplay) certScoreDisplay.innerText = `Score: ${certData.score}/${certData.total} (${certData.percentage}%)`;
+  if (certDateDisplay) certDateDisplay.innerText = certData.issued_date;
+  if (certIdDisplay) certIdDisplay.innerText = certData.certificate_id;
+
+  if (certPreviewSection) certPreviewSection.style.display = 'block';
+  if (certModalFooter) certModalFooter.style.display = 'flex';
 }

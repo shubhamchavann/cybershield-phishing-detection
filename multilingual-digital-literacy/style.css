@@ -1531,3 +1531,181 @@ textarea.form-input {
     font-size: 0.8rem;
   }
 }
+
+/* ==========================================================================
+   VOICE ASSISTANCE & TEXT-TO-SPEECH STYLES
+   ========================================================================== */
+.btn-voice-speaker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: var(--primary-light, rgba(79, 70, 229, 0.12));
+  color: var(--primary, #4f46e5);
+  border: 1px solid var(--primary, #4f46e5);
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-voice-speaker:hover {
+  background-color: var(--primary, #4f46e5);
+  color: #ffffff;
+}
+
+.btn-voice-speaker.speaking {
+  background-color: var(--success, #10b981);
+  border-color: var(--success, #10b981);
+  color: #ffffff;
+  animation: pulseVoice 1.2s infinite;
+}
+
+@keyframes pulseVoice {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* ==========================================================================
+   CERTIFICATE OF COMPLETION STYLES
+   ========================================================================== */
+.cert-frame {
+  background: #ffffff;
+  color: #1e293b;
+  border: 8px solid #b45309;
+  border-radius: 12px;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  font-family: 'Georgia', serif;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.cert-border {
+  border: 2px dashed #d97706;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+.cert-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10rem;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.cert-header h4 {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: #d97706;
+  font-family: sans-serif;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.cert-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 0.4rem;
+}
+
+.cert-header p {
+  font-size: 1rem;
+  color: #64748b;
+  font-family: sans-serif;
+}
+
+.cert-body {
+  margin: 1.8rem 0;
+}
+
+.cert-text {
+  font-size: 1rem;
+  color: #475569;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.cert-name {
+  font-size: 2.2rem;
+  color: #4338ca;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: #d97706;
+  margin: 0.8rem 0;
+}
+
+.cert-score-badge {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+  padding: 0.4rem 1.2rem;
+  border-radius: 9999px;
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 1rem;
+}
+
+.cert-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  font-family: sans-serif;
+  font-size: 0.85rem;
+}
+
+.cert-sub {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  margin-top: 0.2rem;
+}
+
+.cert-seal {
+  width: 75px;
+  height: 75px;
+  background: radial-gradient(circle, #f59e0b, #d97706);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.75rem;
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.4);
+}
+
+.cert-seal small {
+  font-size: 0.6rem;
+  opacity: 0.9;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printableCertFrame, #printableCertFrame * {
+    visibility: visible;
+  }
+  #printableCertFrame {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+  }
+}
+

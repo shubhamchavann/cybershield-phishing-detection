@@ -6,6 +6,8 @@
   <meta name="description" content="Learn digital skills, cybersecurity awareness, online banking safety, and quiz yourself on cyber safety in English, Hindi, and Marathi.">
   <title data-i18n="heroTitle">Multilingual Digital Literacy</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4f46e5">
 </head>
 <body>
 
@@ -508,7 +510,10 @@
             <div class="quiz-results-message" id="quizResultMessage" data-i18n="quizFeedbackExcellent">Excellent!</div>
             <p class="quiz-results-desc" id="quizResultDesc">You have a solid understanding of digital safety and cybersecurity.</p>
             
-            <button class="btn btn-primary" id="btnRestartQuiz" data-i18n="btnRestartQuiz">Restart Quiz</button>
+            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 2rem;">
+              <button class="btn btn-primary" id="btnRestartQuiz" data-i18n="btnRestartQuiz">Restart Quiz</button>
+              <button class="btn btn-secondary" id="btnOpenCertModal">🎓 <span id="certBtnText">Get Certificate of Completion</span></button>
+            </div>
 
             <!-- Detailed Question-by-Question Review -->
             <div class="review-section">
@@ -630,7 +635,12 @@
   <div class="modal-overlay" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modalTitle">Topic Details</h3>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <h3 id="modalTitle">Topic Details</h3>
+          <button class="btn-voice-speaker" id="btnSpeakTopic" title="Listen to this lesson" aria-label="Listen to topic">
+            🔊 <span id="voiceBtnText">Listen</span>
+          </button>
+        </div>
         <button class="btn-close-modal" id="modalCloseBtn" aria-label="Close details modal">
           <svg viewBox="0 0 24 24">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -643,6 +653,65 @@
       <div class="modal-footer">
         <button class="btn btn-outline" id="modalMarkCompleteBtn" data-i18n="markCompleted">Mark as Completed</button>
         <button class="btn btn-primary" id="modalCloseActionBtn" data-i18n="btnClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reusable Certificate Generation Modal -->
+  <div class="modal-overlay" id="certModal" role="dialog" aria-modal="true" aria-labelledby="certModalTitle">
+    <div class="modal-content" style="max-width: 740px;">
+      <div class="modal-header">
+        <h3 id="certModalTitle">🎓 Certificate of Completion</h3>
+        <button class="btn-close-modal" id="certModalCloseBtn" aria-label="Close certificate modal">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="certModalBody">
+        <div id="certInputSection">
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Congratulations on completing the assessment! Enter your full name below to generate your official, verifiable certificate:
+          </p>
+          <label for="certStudentName" style="font-weight: 600; display: block; margin-bottom: 8px;">Your Full Name:</label>
+          <input type="text" id="certStudentName" class="form-input" placeholder="e.g., Alex Johnson / राहुल शर्मा" style="width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 8px;">
+          <button class="btn btn-primary" id="btnGenerateCert">Generate Certificate</button>
+        </div>
+        
+        <div id="certPreviewSection" style="display: none; margin-top: 10px;">
+          <div class="cert-frame" id="printableCertFrame">
+            <div class="cert-border">
+              <div class="cert-watermark">🛡️</div>
+              <div class="cert-header">
+                <h4>COMMUNITY ENGAGEMENT PROJECT (CEP)</h4>
+                <h2>CERTIFICATE OF COMPLETION</h2>
+                <p>Multilingual Digital Literacy & Cyber Safety Assessment</p>
+              </div>
+              <div class="cert-body">
+                <p class="cert-text">This is proudly presented to</p>
+                <h1 class="cert-name" id="certNameDisplay">Student Name</h1>
+                <p class="cert-text">for demonstrating strong digital competencies, understanding cyber threats, and passing the comprehensive cybersecurity assessment.</p>
+                <div class="cert-score-badge" id="certScoreDisplay">Score: 12/15 (80%)</div>
+              </div>
+              <div class="cert-footer">
+                <div>
+                  <strong id="certDateDisplay">03 Sep 2026</strong>
+                  <div class="cert-sub">Date of Issue</div>
+                </div>
+                <div class="cert-seal">
+                  <span>VERIFIED</span>
+                  <small id="certIdDisplay">MDL-9281</small>
+                </div>
+                <div>
+                  <strong>Digital Literacy CEP</strong>
+                  <div class="cert-sub">Authorized Initiative</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" id="certModalFooter" style="display: none;">
+        <button class="btn btn-primary" id="btnPrintCert">🖨️ Print / Save as PDF</button>
+        <button class="btn btn-outline" id="certCloseActionBtn">Close</button>
       </div>
     </div>
   </div>

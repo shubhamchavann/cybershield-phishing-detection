@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 520px; padding: 60px 20px 100px;">
+    <div class="scanner-card" style="box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 240, 255, 0.2);">
+        
+        <div class="scanner-header-center" style="margin-bottom: 25px;">
+            <div class="badge-trophy-icon" style="font-size: 50px; margin-bottom: 10px;">
+                🔐
+            </div>
+            <div class="section-tag" style="margin-bottom: 10px;">
+                RESTRICTED COMMAND INTERFACE
+            </div>
+            <h1 class="section-title" style="font-size: 26px;">
+                Admin Portal Login
+            </h1>
+            <p class="section-subtitle" style="font-size: 14px;">
+                Enter administrator credentials to access Quiz Analytics and Threat Defense telemetry.
+            </p>
+        </div>
+
+        {% if error %}
+        <div style="background: rgba(255, 0, 85, 0.15); border: 1px solid var(--danger); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; color: #ffffff; font-size: 14px; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px;">⚠️</span>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('admin_login') }}" style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <div class="form-group">
+                <label for="username" style="display: block; font-family: var(--font-mono); font-size: 13px; color: var(--primary); margin-bottom: 8px;">
+                    ADMIN USERNAME <span style="color: var(--danger);">*</span>
+                </label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    class="form-input cyber-input" 
+                    placeholder="Enter admin username" 
+                    value="admin"
+                    required
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password" style="display: block; font-family: var(--font-mono); font-size: 13px; color: var(--primary); margin-bottom: 8px;">
+                    SECURITY PASSPHRASE <span style="color: var(--danger);">*</span>
+                </label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    class="form-input cyber-input" 
+                    placeholder="Enter administrator password" 
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 10px; font-size: 16px;">
+                <span>🔐 Authenticate &amp; Access Analytics</span>
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px; font-size: 13px; color: var(--text-muted); font-family: var(--font-mono);">
+            <span>🛡️ CyberShield Multi-Factor Defense &bull; Authorized Personnel Only</span>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
