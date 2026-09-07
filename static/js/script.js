@@ -735,6 +735,7 @@ function initAdminQuizAnalytics() {
     function closeModal() {
         if (modalOverlay) modalOverlay.classList.remove("open");
         document.body.style.overflow = "";
+        document.body.classList.remove("modal-open");
     }
 
     if (closeBtn) closeBtn.addEventListener("click", closeModal);
@@ -744,6 +745,13 @@ function initAdminQuizAnalytics() {
             if (e.target === modalOverlay) closeModal();
         });
     }
+
+    // Close on Escape key press
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modalOverlay && modalOverlay.classList.contains("open")) {
+            closeModal();
+        }
+    });
 
     detailBtns.forEach(btn => {
         btn.addEventListener("click", async () => {
@@ -760,6 +768,7 @@ function initAdminQuizAnalytics() {
             }
             modalOverlay.classList.add("open");
             document.body.style.overflow = "hidden";
+            document.body.classList.add("modal-open");
 
             try {
                 const resp = await fetch(`/api/admin/quiz-attempt/${attemptId}`);
