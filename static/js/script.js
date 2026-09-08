@@ -659,71 +659,25 @@ function initIncidentChecklists() {
    10. ADMIN QUIZ ANALYTICS & THREAT TELEMETRY
    -------------------------------------------------- */
 function initAdminQuizAnalytics() {
-    // 1. Draw Real-time Circular Pie Chart on Canvas
-    const canvas = document.getElementById("quizPieChart");
-    if (canvas && window.QUIZ_ANALYTICS_DATA) {
-        const ctx = canvas.getContext("2d");
-        const totalCorrect = window.QUIZ_ANALYTICS_DATA.totalCorrect || 0;
-        const totalIncorrect = window.QUIZ_ANALYTICS_DATA.totalIncorrect || 0;
-        const total = totalCorrect + totalIncorrect;
-
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radius = 95;
-        const innerRadius = 55; // Doughnut style for modern cyber look
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (total === 0) {
-            // Empty placeholder state
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-            ctx.fill();
-        } else {
-            const correctAngle = (totalCorrect / total) * (Math.PI * 2);
-            const startAngle = -Math.PI / 2;
-
-            // Slice 1: Correct (Green Glow)
-            if (totalCorrect > 0) {
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, startAngle, startAngle + correctAngle);
-                ctx.arc(centerX, centerY, innerRadius, startAngle + correctAngle, startAngle, true);
-                ctx.closePath();
-                ctx.fillStyle = "#00ff9d";
-                ctx.shadowColor = "rgba(0, 255, 157, 0.5)";
-                ctx.shadowBlur = 15;
-                ctx.fill();
-            }
-
-            // Slice 2: Incorrect (Red Glow)
-            if (totalIncorrect > 0) {
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, radius, startAngle + correctAngle, startAngle + Math.PI * 2);
-                ctx.arc(centerX, centerY, innerRadius, startAngle + Math.PI * 2, startAngle + correctAngle, true);
-                ctx.closePath();
-                ctx.fillStyle = "#ff0055";
-                ctx.shadowColor = "rgba(255, 0, 85, 0.5)";
-                ctx.shadowBlur = 15;
-                ctx.fill();
+    // 1. Pre-populate Local Fast Cache from Embedded Server Payload
+    window.QUIZ_ATTEMPTS_MAP = window.QUIZ_ATTEMPTS_MAP || {};
+    try {
+        const payloadElem = document.getElementById("quizAttemptsPayload");
+        if (payloadElem && payloadElem.textContent) {
+            const rawAttempts = JSON.parse(payloadElem.textContent);
+            if (Array.isArray(rawAttempts)) {
+                rawAttempts.forEach(item => {
+                    if (item && item.id != null) {
+                        window.QUIZ_ATTEMPTS_MAP[String(item.id)] = item;
+                    }
+                });
             }
         }
-
-        // Center percentage text
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 22px 'Space Grotesk', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        const pct = total > 0 ? Math.round((totalCorrect / total) * 100) : 0;
-        ctx.fillText(`${pct}%`, centerX, centerY - 6);
-
-        ctx.font = "10px 'JetBrains Mono', monospace";
-        ctx.fillStyle = "#8b9bb4";
-        ctx.fillText("ACCURACY", centerX, centerY + 16);
+    } catch (e) {
+        console.warn("Telemetry payload preload notice:", e);
     }
 
-    // 2. View Details Modal Handler
+    // 2. View Details Modal Elements
     const detailBtns = document.querySelectorAll(".btn-view-details");
     const modalOverlay = document.getElementById("quizDetailsModal");
     const modalTitle = document.getElementById("modalDetailTitle");
@@ -753,83 +707,149 @@ function initAdminQuizAnalytics() {
         }
     });
 
-    detailBtns.forEach(btn => {
-        btn.addEventListener("click", async () => {
-            const attemptId = btn.getAttribute("data-attempt-id");
-            if (!attemptId || !modalOverlay) return;
+    // Helper: Render participant breakdown into modal
+    function renderAttemptDetails(data) {
+        if (!data) return;
 
-            if (modalBody) {
-                modalBody.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--primary); font-family: var(--font-mono);">
-                        <div class="boot-icon-spin" style="font-size: 32px; display: inline-block; margin-bottom: 12px;">🛡️</div>
-                        <div>Decrypting participant breakdown...</div>
+        if (modalTitle) {
+            modalTitle.innerText = `${data.user_name || 'Participant'} — Quiz Answers`;
+        }
+        if (modalSubtitle) {
+            const totalQ = data.total_questions || 10;
+            const pct = data.percentage != null ? data.percentage : (Math.round((data.score / totalQ) * 100));
+            modalSubtitle.innerText = `Final Score: ${data.score}/${totalQ} (${pct}%) • Date: ${data.completed_at || 'Recently'}`;
+        }
+
+        if (modalBody) {
+            const totalQ = data.total_questions || 10;
+            const corrCount = data.correct_count != null ? data.correct_count : data.score;
+            const incorrCount = data.incorrect_count != null ? data.incorrect_count : (totalQ - corrCount);
+            const pct = data.percentage != null ? data.percentage : (Math.round((corrCount / totalQ) * 100));
+
+            let html = `
+                <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <div style="background: rgba(0, 255, 157, 0.1); border: 1px solid var(--success); padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; color: var(--success); font-family: var(--font-mono);">
+                        ✔ Correct: ${corrCount}
+                    </div>
+                    <div style="background: rgba(255, 0, 85, 0.1); border: 1px solid var(--danger); padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; color: var(--danger); font-family: var(--font-mono);">
+                        ✖ Incorrect: ${incorrCount}
+                    </div>
+                    <div style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; color: var(--primary); font-family: var(--font-mono);">
+                        🎯 Accuracy: ${pct}%
+                    </div>
+                </div>
+            `;
+
+            const answers = data.answers || [];
+            if (answers.length === 0) {
+                html += `
+                    <div style="text-align: center; padding: 30px; color: var(--text-muted); background: rgba(16, 26, 48, 0.4); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                        <div style="font-size: 28px; margin-bottom: 10px;">📋</div>
+                        <div>Participant scored <strong>${corrCount} / ${totalQ}</strong> (${pct}%).</div>
+                        <div style="font-size: 13px; margin-top: 6px; color: var(--text-muted);">Detailed itemized answers logged directly into threat intelligence summary.</div>
                     </div>
                 `;
-            }
-            modalOverlay.classList.add("open");
-            document.body.style.overflow = "hidden";
-            document.body.classList.add("modal-open");
+            } else {
+                answers.forEach(item => {
+                    const isCorr = !!item.is_correct;
+                    const selKey = item.selected_key || "N/A";
+                    const selText = item.selected_text || "No answer chosen";
+                    const corrKey = item.correct_key || "N/A";
+                    const corrText = item.correct_text || "";
 
-            try {
-                const resp = await fetch(`/api/admin/quiz-attempt/${attemptId}`);
-                if (!resp.ok) throw new Error("Attempt fetch failed");
-                const data = await resp.json();
-
-                if (modalTitle) modalTitle.innerText = `${data.user_name} — Quiz Answers`;
-                if (modalSubtitle) modalSubtitle.innerText = `Final Score: ${data.score}/10 (${data.percentage}%) • Date: ${data.completed_at}`;
-
-                if (modalBody) {
-                    let html = `
-                        <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-                            <div style="background: rgba(0, 255, 157, 0.1); border: 1px solid var(--success); padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; color: var(--success); font-family: var(--font-mono);">
-                                ✔ Correct: ${data.correct_count}
+                    html += `
+                        <div class="modal-q-item ${isCorr ? 'correct' : 'incorrect'}">
+                            <div class="modal-q-title">
+                                Question ${item.num}: ${item.question}
                             </div>
-                            <div style="background: rgba(255, 0, 85, 0.1); border: 1px solid var(--danger); padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; color: var(--danger); font-family: var(--font-mono);">
-                                ✖ Incorrect: ${data.incorrect_count}
+                            <div class="modal-ans-row">
+                                <strong style="color: var(--text-muted);">Selected Answer:</strong> 
+                                <span style="color: ${isCorr ? 'var(--success)' : 'var(--danger)'}; font-weight: 600;">
+                                    Option ${selKey}: ${selText}
+                                </span>
                             </div>
-                            <div style="background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); padding: 8px 16px; border-radius: var(--radius-full); font-size: 13px; color: var(--primary); font-family: var(--font-mono);">
-                                🎯 Accuracy: ${data.percentage}%
+                            <div class="modal-ans-row">
+                                <strong style="color: var(--text-muted);">Correct Answer:</strong> 
+                                <span style="color: var(--success); font-weight: 600;">
+                                    Option ${corrKey}: ${corrText}
+                                </span>
+                            </div>
+                            <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: ${isCorr ? 'var(--success)' : 'var(--danger)'};">
+                                Status: ${isCorr ? '✅ Correct' : '❌ Incorrect'}
                             </div>
                         </div>
                     `;
+                });
+            }
 
-                    const answers = data.answers || [];
-                    if (answers.length === 0) {
-                        html += `<p style="color: var(--text-muted);">No individual question telemetry saved for this attempt.</p>`;
-                    } else {
-                        answers.forEach(item => {
-                            const isCorr = item.is_correct;
-                            html += `
-                                <div class="modal-q-item ${isCorr ? 'correct' : 'incorrect'}">
-                                    <div class="modal-q-title">
-                                        Question ${item.num}: ${item.question}
-                                    </div>
-                                    <div class="modal-ans-row">
-                                        <strong style="color: var(--text-muted);">Selected Answer:</strong> 
-                                        <span style="color: ${isCorr ? 'var(--success)' : 'var(--danger)'}; font-weight: 600;">
-                                            Option ${item.selected_key}: ${item.selected_text}
-                                        </span>
-                                    </div>
-                                    <div class="modal-ans-row">
-                                        <strong style="color: var(--text-muted);">Correct Answer:</strong> 
-                                        <span style="color: var(--success); font-weight: 600;">
-                                            Option ${item.correct_key}: ${item.correct_text}
-                                        </span>
-                                    </div>
-                                    <div style="margin-top: 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: ${isCorr ? 'var(--success)' : 'var(--danger)'};">
-                                        Status: ${isCorr ? '✅ Correct' : '❌ Incorrect'}
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    }
+            modalBody.innerHTML = html;
+        }
+    }
 
-                    modalBody.innerHTML = html;
+    // Helper: Fetch attempt details if not available in memory
+    async function loadAttempt(attemptId) {
+        if (!attemptId || !modalOverlay) return;
+
+        modalOverlay.classList.add("open");
+        document.body.style.overflow = "hidden";
+        document.body.classList.add("modal-open");
+
+        const idStr = String(attemptId);
+        // Fast path: Instant 0ms cache hit
+        if (window.QUIZ_ATTEMPTS_MAP && window.QUIZ_ATTEMPTS_MAP[idStr]) {
+            renderAttemptDetails(window.QUIZ_ATTEMPTS_MAP[idStr]);
+            return;
+        }
+
+        // Fallback path: Fetch from server API
+        if (modalBody) {
+            modalBody.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--primary); font-family: var(--font-mono);">
+                    <div class="boot-icon-spin" style="font-size: 32px; display: inline-block; margin-bottom: 12px;">🛡️</div>
+                    <div>Decrypting participant breakdown...</div>
+                </div>
+            `;
+        }
+
+        try {
+            const resp = await fetch(`/api/admin/quiz-attempt/${attemptId}`, {
+                headers: { "Accept": "application/json" }
+            });
+            if (!resp.ok) {
+                const errData = await resp.json().catch(() => ({}));
+                throw new Error(errData.error || `HTTP error ${resp.status}`);
+            }
+            const data = await resp.json();
+            window.QUIZ_ATTEMPTS_MAP[idStr] = data;
+            renderAttemptDetails(data);
+        } catch (err) {
+            if (modalBody) {
+                modalBody.innerHTML = `
+                    <div style="text-align: center; color: var(--danger); padding: 30px; background: rgba(255, 0, 85, 0.08); border: 1px solid var(--danger); border-radius: var(--radius-md);">
+                        <div style="font-size: 28px; margin-bottom: 10px;">⚠️</div>
+                        <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Participant Breakdown Unavailable</div>
+                        <div style="font-size: 13px; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 16px;">
+                            ${err.message || 'Unable to connect to database stream'}
+                        </div>
+                        <button type="button" class="btn secondary" id="btnRetryModalFetch" style="padding: 6px 18px; font-size: 13px;">
+                            <span>🔄 Retry Inspection</span>
+                        </button>
+                    </div>
+                `;
+                const retryBtn = document.getElementById("btnRetryModalFetch");
+                if (retryBtn) {
+                    retryBtn.addEventListener("click", () => loadAttempt(attemptId));
                 }
-            } catch (err) {
-                if (modalBody) {
-                    modalBody.innerHTML = `<div style="color: var(--danger); padding: 20px;">Failed to load participant data: ${err.message}</div>`;
-                }
+            }
+        }
+    }
+
+    // Attach click listeners to all detail inspection buttons
+    detailBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const attemptId = btn.getAttribute("data-attempt-id");
+            if (attemptId) {
+                loadAttempt(attemptId);
             }
         });
     });

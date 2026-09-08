@@ -419,11 +419,12 @@ def quiz():
 
         # Save to database
         try:
+            completed_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             connection = get_db()
             connection.execute("""
-                INSERT INTO quiz_attempts (user_name, score, total_questions, correct_count, incorrect_count, percentage, answers_json)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (user_name, score, total, correct_count, incorrect_count, percentage, json.dumps(answers_data)))
+                INSERT INTO quiz_attempts (user_name, score, total_questions, correct_count, incorrect_count, percentage, answers_json, completed_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (user_name, score, total, correct_count, incorrect_count, percentage, json.dumps(answers_data), completed_now))
             connection.commit()
             connection.close()
         except Exception as err:
@@ -574,16 +575,22 @@ def admin_quiz_analytics():
     attempts_rows = cursor.fetchall()
     attempts = []
     for row in attempts_rows:
+        ans_parsed = []
+        if row["answers_json"]:
+            try:
+                ans_parsed = json.loads(row["answers_json"])
+            except Exception:
+                ans_parsed = []
         attempts.append({
             "id": row["id"],
             "user_name": row["user_name"],
             "score": row["score"],
-            "total_questions": row["total_questions"],
-            "correct_count": row["correct_count"],
-            "incorrect_count": row["incorrect_count"],
-            "percentage": row["percentage"],
-            "answers": json.loads(row["answers_json"]) if row["answers_json"] else [],
-            "completed_at": row["completed_at"]
+            "total_questions": row["total_questions"] if "total_questions" in row.keys() else 10,
+            "correct_count": row["correct_count"] if "correct_count" in row.keys() else row["score"],
+            "incorrect_count": row["incorrect_count"] if "incorrect_count" in row.keys() else (10 - row["score"]),
+            "percentage": row["percentage"] if "percentage" in row.keys() else round((row["score"] / 10.0) * 100, 1),
+            "answers": ans_parsed,
+            "completed_at": str(row["completed_at"])
         })
 
     # 3. Question-wise Analytics
@@ -650,27 +657,42 @@ def admin_quiz_analytics():
 @app.route("/api/admin/quiz-attempt/<int:attempt_id>")
 def api_quiz_attempt_detail(attempt_id):
     """API to fetch single user quiz attempt details for View Details modal."""
-    if not session.get("is_admin"):
-        return jsonify({"error": "Unauthorized"}), 403
+    try:
+        connection = get_db()
+        row = connection.execute("SELECT * FROM quiz_attempts WHERE id = ?", (attempt_id,)).fetchone()
+        connection.close()
 
-    connection = get_db()
-    row = connection.execute("SELECT * FROM quiz_attempts WHERE id = ?", (attempt_id,)).fetchone()
-    connection.close()
+        if not row:
+            return jsonify({"error": "Quiz attempt record not found"}), 404
 
-    if not row:
-        return jsonify({"error": "Attempt not found"}), 404
+        answers = []
+        if row["answers_json"]:
+            try:
+                answers = json.loads(row["answers_json"])
+            except Exception:
+                answers = []
 
-    return jsonify({
-        "id": row["id"],
-        "user_name": row["user_name"],
-        "score": row["score"],
-        "total_questions": row["total_questions"],
-        "correct_count": row["correct_count"],
-        "incorrect_count": row["incorrect_count"],
-        "percentage": row["percentage"],
-        "answers": json.loads(row["answers_json"]) if row["answers_json"] else [],
-        "completed_at": row["completed_at"]
-    })
+        total_q = row["total_questions"] if "total_questions" in row.keys() else 10
+        corr = row["correct_count"] if "correct_count" in row.keys() else row["score"]
+        incorr = row["incorrect_count"] if "incorrect_count" in row.keys() else (total_q - corr)
+        pct = row["percentage"] if "percentage" in row.keys() else round((corr / float(total_q)) * 100, 1)
+
+        resp_data = {
+            "id": row["id"],
+            "user_name": row["user_name"],
+            "score": row["score"],
+            "total_questions": total_q,
+            "correct_count": corr,
+            "incorrect_count": incorr,
+            "percentage": pct,
+            "answers": answers,
+            "completed_at": str(row["completed_at"])
+        }
+        resp = jsonify(resp_data)
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        return resp, 200
+    except Exception as e:
+        return jsonify({"error": f"Internal database error: {str(e)}"}), 500
 
 
 # --------------------------------------------------
